@@ -1,7 +1,7 @@
 import Head from "next/head";
-import styles from "@/styles/App.module.css";
+import { App } from "@/components/App";
 
-export default function App() {
+export default function Home() {
   return (
     <>
       <Head>
@@ -9,9 +9,7 @@ export default function App() {
         <meta name="description" content="Digital Gradient Garden" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <div className={styles.app}>
-        <h1>Digital Gradient Garden</h1>
-      </div>
+      <App />
     </>
   );
 }
