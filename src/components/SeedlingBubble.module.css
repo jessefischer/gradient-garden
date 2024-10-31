@@ -1,7 +1,6 @@
 .seedlingBubble {
   position: absolute;
-  border-radius: 50px;
-  background: radial-gradient(circle, red 30%, transparent 50%);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
