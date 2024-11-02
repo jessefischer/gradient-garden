@@ -64,9 +64,9 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
         width: size,
         background: background,
       }}
-      onMouseDownCapture={handleMouseDown}
-      onMouseMoveCapture={handleMouseMove}
-      onMouseUpCapture={handleMouseUp}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
     >
       {/* We use the curly braces to inject the props into the JSX output, so that
           when any of the props change value, the HTML will update or "react" automatically */}
