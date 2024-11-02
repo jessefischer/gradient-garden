@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import styles from "./Homepage.module.css";
 
@@ -15,7 +16,12 @@ export const Homepage = () => {
         </div>
         <div className={styles.noiseOverlay}></div>
         <div className={styles.beginWindow}>
-          <h1>Pollinator</h1>
+          <Image
+            src="/assets/pollinator-logo.svg"
+            alt="Pollinator"
+            width={515}
+            height={96}
+          />
           <Link href="/garden">
             <button>Enter the garden</button>
           </Link>

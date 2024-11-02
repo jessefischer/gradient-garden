@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Image from "next/image";
+
 import { SeedlingBubble } from "./SeedlingBubble";
 
 import styles from "./App.module.css";
@@ -26,7 +28,12 @@ export const App = () => {
     // React uses a language called JSX which is a fancy way of inserting HTML-like language into the middle of
     // JavaScript code. It compiles down into something similar to document.createElement('div').
     <div className={styles.app} onClick={handleClick}>
-      <h1>Pollinator</h1>
+      <Image
+        src="/assets/pollinator-logo.svg"
+        alt="Pollinator"
+        width={206}
+        height={38.4}
+      />
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
       {seedlings.map(({ x, y, title, size }, i) => {
