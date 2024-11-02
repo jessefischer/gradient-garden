@@ -3,18 +3,17 @@ import styles from "./SeedlingBubble.module.css";
 
 // Define an array of customized colors
 const FALL_PALETTE = [
-  "#D9A782", //grey brown
-  "#B34F05", //brown
   "#FD699F", //pink
   "#DFA6A3", //grey pink
   "#FFDB00", //bright yellow
-  "#D5B807", //dull yellow
   "#B2D400", //bright green
-  // '#93BF06', //dull green
-  "#548602", //dark green
   "#FC840D", //bright orange
-  // '#E38100', //dull orange
+  "#E38100", //dark orange
   "#BF4E47", //dark red
+  "#B34F05", //brown
+  "#D9A782", //grey brown
+  "#90D4FF", //sky blue
+  "#5E95DA", //blue
 ];
 
 function randomColorFromPalette() {

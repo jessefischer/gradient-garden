@@ -28,7 +28,7 @@ export const App = () => {
   return (
     // React uses a language called JSX which is a fancy way of inserting HTML-like language into the middle of
     // JavaScript code. It compiles down into something similar to document.createElement('div').
-    <div className={styles.app} onClick={handleClick}>
+    <div className={styles.app} onDoubleClick={handleClick}>
       <Image
         src="/assets/pollinator-logo.svg"
         alt="Pollinator"
