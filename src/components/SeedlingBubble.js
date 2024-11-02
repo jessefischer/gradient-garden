@@ -3,18 +3,18 @@ import styles from "./SeedlingBubble.module.css";
 
 // Define an array of customized colors
 const FALL_PALETTE = [
-  '#D9A782', //grey brown
-  '#B34F05', //brown
-  '#FD699F', //pink
-  '#DFA6A3', //grey pink
-  '#FFDB00', //bright yellow
-  '#D5B807', //dull yellow
-  '#B2D400', //bright green
+  "#D9A782", //grey brown
+  "#B34F05", //brown
+  "#FD699F", //pink
+  "#DFA6A3", //grey pink
+  "#FFDB00", //bright yellow
+  "#D5B807", //dull yellow
+  "#B2D400", //bright green
   // '#93BF06', //dull green
-  '#548602', //dark green
-  '#FC840D', //bright orange
+  "#548602", //dark green
+  "#FC840D", //bright orange
   // '#E38100', //dull orange
-  '#BF4E47', //dark red
+  "#BF4E47", //dark red
 ];
 
 function randomColorFromPalette() {
@@ -24,8 +24,11 @@ function randomColorFromPalette() {
 
 // This is one bubble defining a seedling on the main app window.
 // The props are title, x and y coordinates (of the center) and size (diameter)
-export const SeedlingBubble = ({ title, x, y, size }) => {
+export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
   const [background, setBackground] = useState();
+  const [isDragging, setDragging] = useState(false); // Initial value is false
+  const [offsetX, setOffsetX] = useState();
+  const [offsetY, setOffsetY] = useState();
 
   // We use the useEffect hook to run some code when the component is first rendered.
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
@@ -37,6 +40,22 @@ export const SeedlingBubble = ({ title, x, y, size }) => {
     const newBackground = `radial-gradient(closest-side, ${color1}, ${color2}, rgba(0, 0, 0, 0))`;
     setBackground(newBackground);
   }, []);
+
+  const handleMouseDown = function (e) {
+    setDragging(true);
+    setOffsetX(e.clientX);
+    setOffsetY(e.clientY);
+  };
+
+  const handleMouseMove = function (e) {
+    if (isDragging) {
+      setPosition({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const handleMouseUp = function () {
+    setDragging(false);
+  };
 
   return (
     <div
@@ -50,6 +69,9 @@ export const SeedlingBubble = ({ title, x, y, size }) => {
         width: size,
         background: background,
       }}
+      onMouseDownCapture={handleMouseDown}
+      onMouseMoveCapture={handleMouseMove}
+      onMouseUpCapture={handleMouseUp}
     >
       {/* We use the curly braces to inject the props into the JSX output, so that
           when any of the props change value, the HTML will update or "react" automatically */}
