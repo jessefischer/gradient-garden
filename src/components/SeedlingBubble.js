@@ -26,8 +26,6 @@ function randomColorFromPalette() {
 export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
   const [background, setBackground] = useState();
   const [isDragging, setDragging] = useState(false); // Initial value is false
-  const [offsetX, setOffsetX] = useState();
-  const [offsetY, setOffsetY] = useState();
 
   // We use the useEffect hook to run some code when the component is first rendered.
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
@@ -36,14 +34,12 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
     const color1 = randomColorFromPalette();
     const color2 = randomColorFromPalette();
 
-    const newBackground = `radial-gradient(closest-side, ${color1}, ${color2}, rgba(0, 0, 0, 0))`;
+    const newBackground = `radial-gradient(closest-side, ${color1} 70%, ${color2} 90%, rgba(0, 0, 0, 0))`;
     setBackground(newBackground);
   }, []);
 
   const handleMouseDown = function (e) {
     setDragging(true);
-    setOffsetX(e.clientX);
-    setOffsetY(e.clientY);
   };
 
   const handleMouseMove = function (e) {

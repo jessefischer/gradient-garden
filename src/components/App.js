@@ -20,7 +20,7 @@ export const App = () => {
       x: mouseData.x,
       y: mouseData.y,
       title: "New Seedling",
-      size: Math.random() * 400 + 600,
+      size: Math.random() * 300 + 200,
     };
     setSeedlings([...seedlings, newSeedling]);
   };
