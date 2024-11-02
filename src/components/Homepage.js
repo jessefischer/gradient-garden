@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import styles from "./Homepage.module.css";
 
 export const Homepage = () => {
@@ -14,7 +16,9 @@ export const Homepage = () => {
         <div className={styles.noiseOverlay}></div>
         <div className={styles.beginWindow}>
           <h1>Pollinator</h1>
-          <button>Enter the garden</button>
+          <Link href="/garden">
+            <button>Enter the garden</button>
+          </Link>
         </div>
       </div>
     </div>
