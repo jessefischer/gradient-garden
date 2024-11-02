@@ -7,10 +7,8 @@
   position: fixed;
   top: 0;
 
-  /* This construction means any nested h1 inside of an element with class '.app' */
-  & h1 {
-    font-weight: 100;
-    margin: 0;
-    padding: 2em;
+  /* This construction means any nested img inside of an element with class '.app' */
+  & img {
+    margin: 2em;
   }
 }
