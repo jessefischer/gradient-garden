@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import styles from "./App.module.css";
 import { SeedlingBubble } from "./SeedlingBubble";
-import { CreateBubbleForm } from "./CreateBubbleForm";
+import { NewPost } from "./NewPost";
 import { BubbleModal } from "./BubbleModal";
 
 function getRandomSize() {
@@ -108,7 +108,7 @@ export function App() {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <CreateBubbleForm
+          <NewPost
             onSubmit={handleBubbleSubmit}
             onCancel={() => {
               setIsCreatingBubble(false);

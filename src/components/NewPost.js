@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import styles from "./CreateBubbleForm.module.css";
+import styles from "./NewPost.module.css";
 
-export const CreateBubbleForm = ({ onSubmit, onCancel }) => {
+export const NewPost = ({ onSubmit, onCancel }) => {
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
-  const [description, setDescription] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
