@@ -1,6 +1,6 @@
 .container {
-  --color-bg1: rgb(72, 114, 100);
-  --color-bg2: rgb(2, 45, 14);
+  --color-bg1: rgb(147, 207, 187);
+  --color-bg2: rgb(35, 79, 47);
   --color1: 52, 78, 65;
   --color2: 33, 250, 144;
   --color3: 253, 255, 243;
@@ -203,7 +203,7 @@
     font-size: 2rem;
     padding: 2rem 4rem;
     border-radius: 1rem;
-    color: rgba(255, 255, 255, 1);
+    color: rgb(0, 0, 0);
     background-color: rgba(255, 255, 255, 0.1);
     border: 0rem solid #fff;
   }
