@@ -10,5 +10,7 @@
   /* This construction means any nested img inside of an element with class '.app' */
   & img {
     margin: 2em;
+    z-index: 20;
+    position: relative;
   }
 }

@@ -14,12 +14,13 @@ export const App = () => {
   const [seedlings, setSeedlings] = useState([]);
 
   const handleClick = (event) => {
+    if (event.target !== event.currentTarget) return; // Prevent from responding to dragging events on bubbles
     const mouseData = { x: event.clientX, y: event.clientY };
     const newSeedling = {
       x: mouseData.x,
       y: mouseData.y,
       title: "New Seedling",
-      size: Math.random() * 400 + 600,
+      size: Math.random() * 300 + 200,
     };
     setSeedlings([...seedlings, newSeedling]);
   };
@@ -27,7 +28,7 @@ export const App = () => {
   return (
     // React uses a language called JSX which is a fancy way of inserting HTML-like language into the middle of
     // JavaScript code. It compiles down into something similar to document.createElement('div').
-    <div className={styles.app} onClick={handleClick}>
+    <div className={styles.app} onDoubleClick={handleClick}>
       <Image
         src="/assets/pollinator-logo.svg"
         alt="Pollinator"
@@ -39,7 +40,31 @@ export const App = () => {
       {seedlings.map(({ x, y, title, size }, i) => {
         // We have to define a unique key for each element in the resulting array in order for React to keep
         // track of them properly
-        return <SeedlingBubble key={i} title={title} x={x} y={y} size={size} />;
+        return (
+          <SeedlingBubble
+            key={i}
+            title={title}
+            x={x}
+            y={y}
+            size={size}
+            setPosition={({ x: newX, y: newY }) => {
+              console.log("setPosition");
+              const newSeedling = {
+                x: newX,
+                y: newY,
+                title,
+                size,
+              };
+              // This seems cumbersome but is necessary because if we simply mutate one of the
+              // elements of newSeedlings, React won't notice that it's been updated and therefore
+              // won't re-render the components. You have to create a whole new array from scratch
+              // in order for it to re-render.
+              const newSeedlings = [...seedlings];
+              newSeedlings[i] = newSeedling;
+              setSeedlings(newSeedlings);
+            }}
+          />
+        );
       })}
     </div>
   );
