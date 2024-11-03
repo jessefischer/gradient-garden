@@ -1,71 +1,128 @@
-import { useState } from "react";
-import Image from "next/image";
-
-import { SeedlingBubble } from "./SeedlingBubble";
-
+import { useState, useRef } from "react";
 import styles from "./App.module.css";
+import { SeedlingBubble } from "./SeedlingBubble";
+import { CreateBubbleForm } from "./CreateBubbleForm";
+import { BubbleModal } from "./BubbleModal";
 
-export const App = () => {
-  // React uses a concept called "state" to keep track of data that changes over time, instead of using
-  // global variables like in P5. This state is local to the particular component it's defined in, in this
-  // instance the App component. Whenever the state changes, the whole component re-renders. We can use
-  // the `useState` hook to create a piece of state that we can update. The first element in the array is the
-  // current value of the state, and the second element is a function that we can use to update the state.
-  const [seedlings, setSeedlings] = useState([]);
+function getRandomSize() {
+  return Math.random() * 2 + 4; // generates number between 4 and 6
+}
 
-  const handleClick = (event) => {
-    if (event.target !== event.currentTarget) return; // Prevent from responding to dragging events on bubbles
-    const mouseData = { x: event.clientX, y: event.clientY };
-    const newSeedling = {
-      x: mouseData.x,
-      y: mouseData.y,
-      title: "New Seedling",
-      size: Math.random() * 300 + 200,
+export function App() {
+  const [bubbles, setBubbles] = useState([]);
+  const [isCreatingBubble, setIsCreatingBubble] = useState(false);
+  const [tempBubblePosition, setTempBubblePosition] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBubble, setSelectedBubble] = useState(null);
+  const clickStartPosition = useRef(null);
+
+  const handleDoubleClick = (e) => {
+    // calculate the distance moved
+    const distanceMoved = clickStartPosition.current
+      ? Math.sqrt(
+          Math.pow(e.clientX - clickStartPosition.current.x, 2) +
+            Math.pow(e.clientY - clickStartPosition.current.y, 2)
+        )
+      : 0;
+
+    // only open the form if the mouse hasn't moved much
+    if (distanceMoved < 5) {
+      setIsCreatingBubble(true);
+      setTempBubblePosition({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    // store the initial click position
+    clickStartPosition.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleBubbleSubmit = (formData) => {
+    const newBubble = {
+      id: Date.now(),
+      x: tempBubblePosition.x,
+      y: tempBubblePosition.y,
+      size: `${getRandomSize()}vw`,
+      ...formData,
     };
-    setSeedlings([...seedlings, newSeedling]);
+
+    setBubbles([...bubbles, newBubble]);
+    setIsCreatingBubble(false);
+    setTempBubblePosition(null);
+  };
+
+  const handleBubbleClick = (bubbleData) => {
+    setSelectedBubble(bubbleData);
+    setIsModalOpen(true);
+  };
+
+  const updateBubblePosition = (id, newPosition) => {
+    setBubbles(
+      bubbles.map((bubble) =>
+        bubble.id === id
+          ? { ...bubble, x: newPosition.x, y: newPosition.y }
+          : bubble
+      )
+    );
   };
 
   return (
-    // React uses a language called JSX which is a fancy way of inserting HTML-like language into the middle of
-    // JavaScript code. It compiles down into something similar to document.createElement('div').
-    <div className={styles.app} onDoubleClick={handleClick}>
-      <Image
-        src="/assets/pollinator-logo.svg"
-        alt="Pollinator"
-        width={206}
-        height={38.4}
-      />
-      {/* The .map function takes an array in one format and maps each element onto a different format.
-          In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
-      {seedlings.map(({ x, y, title, size }, i) => {
-        // We have to define a unique key for each element in the resulting array in order for React to keep
-        // track of them properly
-        return (
-          <SeedlingBubble
-            key={i}
-            title={title}
-            x={x}
-            y={y}
-            size={size}
-            setPosition={({ x: newX, y: newY }) => {
-              console.log("setPosition");
-              const newSeedling = {
-                x: newX,
-                y: newY,
-                title,
-                size,
-              };
-              // This seems cumbersome but is necessary because if we simply mutate one of the
-              // elements of newSeedlings, React won't notice that it's been updated and therefore
-              // won't re-render the components. You have to create a whole new array from scratch
-              // in order for it to re-render.
-              const newSeedlings = [...seedlings];
-              newSeedlings[i] = newSeedling;
-              setSeedlings(newSeedlings);
+    <div
+      className={styles.app}
+      onMouseDown={handleMouseDown}
+      onDoubleClick={handleDoubleClick}
+    >
+      {bubbles.map((bubble) => (
+        <SeedlingBubble
+          key={bubble.id}
+          title={bubble.title}
+          x={bubble.x}
+          y={bubble.y}
+          size={bubble.size}
+          link={bubble.link}
+          description={bubble.description}
+          setPosition={(pos) => updateBubblePosition(bubble.id, pos)}
+          onBubbleClick={handleBubbleClick}
+        />
+      ))}
+
+      {isCreatingBubble && tempBubblePosition && (
+        <SeedlingBubble
+          title=""
+          x={tempBubblePosition.x}
+          y={tempBubblePosition.y}
+          size={`${getRandomSize()}vw`}
+          setPosition={() => {}}
+          onBubbleClick={() => {}}
+        />
+      )}
+
+      {isCreatingBubble && tempBubblePosition && (
+        <div
+          className={styles.formContainer}
+          style={{
+            position: "absolute",
+            top: tempBubblePosition.y,
+            left: tempBubblePosition.x,
+            transform: "translate(-50%, -50%)",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <CreateBubbleForm
+            onSubmit={handleBubbleSubmit}
+            onCancel={() => {
+              setIsCreatingBubble(false);
+              setTempBubblePosition(null);
             }}
           />
-        );
-      })}
+        </div>
+      )}
+
+      <BubbleModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        bubbleData={selectedBubble || {}}
+      />
     </div>
   );
-};
+}

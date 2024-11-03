@@ -23,9 +23,19 @@ function randomColorFromPalette() {
 
 // This is one bubble defining a seedling on the main app window.
 // The props are title, x and y coordinates (of the center) and size (diameter)
-export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
+export const SeedlingBubble = ({
+  title,
+  x,
+  y,
+  size,
+  setPosition,
+  link,
+  description,
+  onBubbleClick,
+}) => {
   const [background, setBackground] = useState();
-  const [isDragging, setDragging] = useState(false); // Initial value is false
+  const [isDragging, setDragging] = useState(false);
+  const [dragStartTime, setDragStartTime] = useState(null);
 
   // We use the useEffect hook to run some code when the component is first rendered.
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
@@ -40,6 +50,7 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
 
   const handleMouseDown = function (e) {
     setDragging(true);
+    setDragStartTime(Date.now());
   };
 
   const handleMouseMove = function (e) {
@@ -48,29 +59,44 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
     }
   };
 
-  const handleMouseUp = function () {
+  const handleMouseUp = function (e) {
+    const dragDuration = Date.now() - dragStartTime;
     setDragging(false);
+
+    // if the drag duration is less than 200ms, consider it a click
+    if (dragDuration < 200) {
+      onBubbleClick({ title, link, description });
+    }
   };
+
+  // Convert size to pixels for offset calculations if it's in vw units
+  const sizeInPixels = size.toString().includes("vw")
+    ? (parseFloat(size) * window.innerWidth) / 100
+    : parseFloat(size);
 
   return (
     <div
-      // React uses "className" instead of the normal "class" because "class" is already a reserved keyword
-      // in JavaScript with a different meaning.
       className={styles.seedlingBubble}
       style={{
-        top: y - size / 2, // We do the extra calculation because CSS is expecting top-left corner
-        left: x - size / 2, // instead of center for <div> elements
-        height: size,
+        top: y - sizeInPixels / 2,
+        left: x - sizeInPixels / 2,
+        height: size, // use the original size value with units
         width: size,
-        background: background,
+        cursor: "pointer",
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {/* We use the curly braces to inject the props into the JSX output, so that
-          when any of the props change value, the HTML will update or "react" automatically */}
-      {title}
+      <div
+        className={styles.blurBackground}
+        style={{
+          height: size,
+          width: size,
+          background: background,
+        }}
+      ></div>
+      <div className={styles.title}>{title}</div>
     </div>
   );
 };

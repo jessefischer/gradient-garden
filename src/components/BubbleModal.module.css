@@ -1,0 +1,68 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(80px);
+  padding: 4rem;
+  border-radius: 1.5rem;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+}
+.closeButton:hover {
+  color: #2c332e;
+  transition: color 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 0.8rem;
+}
+
+.linkContainer {
+  margin: 15px 0;
+}
+
+.linkContainer a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.linkContainer a:hover {
+  text-decoration: underline;
+}
+
+.description {
+  margin: 15px 0;
+  line-height: 1.5;
+}
+
+.commentsSection,
+.reactionsSection {
+  margin: 20px 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
