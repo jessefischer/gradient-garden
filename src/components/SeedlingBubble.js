@@ -31,7 +31,7 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
   // new random colors on every bubble every time the user adds a new bubble.
   useEffect(() => {
-    const newBackground = `radial-gradient(closest-side, ${randomColorFromPalette()} 70%, rgba(0, 0, 0, 0))` //changed to single color gradient
+    const newBackground = `radial-gradient(closest-side, ${randomColorFromPalette()} 50%, rgba(0, 0, 0, 0))` //changed to single color gradient
     // const color1 = randomColorFromPalette();
     // const color2 = randomColorFromPalette();
     // const newBackground = `radial-gradient(closest-side, ${color1} 70%, ${color2} 90%, rgba(0, 0, 0, 0))`;
@@ -63,6 +63,7 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
         height: size,
         width: size,
         background: background,
+        zIndex: isDragging ? 1000 : 'auto', // move bubble to toppest layer when dragged
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
