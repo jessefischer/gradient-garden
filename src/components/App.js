@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Image from "next/image";
 
+import Info from "./Info";
+import NewPost from "./NewPost";
+
 import { SeedlingBubble } from "./SeedlingBubble";
 
 import styles from "./App.module.css";
@@ -12,17 +15,34 @@ export const App = () => {
   // the `useState` hook to create a piece of state that we can update. The first element in the array is the
   // current value of the state, and the second element is a function that we can use to update the state.
   const [seedlings, setSeedlings] = useState([]);
+  const [isInfoOpen, setInfoOpen] = useState(true); // Set Info Overlay to default when opening the garden for the first time
+  const [isNewPostOpen, setNewPostOpen] = useState(false); 
 
   const handleClick = (event) => {
-    if (event.target !== event.currentTarget) return; // Prevent from responding to dragging events on bubbles
-    const mouseData = { x: event.clientX, y: event.clientY };
-    const newSeedling = {
-      x: mouseData.x,
-      y: mouseData.y,
-      title: "New Seedling",
-      size: Math.random() * 300 + 200,
-    };
-    setSeedlings([...seedlings, newSeedling]);
+    // open a new post overlay when double click instead of directly adding a new seedling
+    if (event.target === event.currentTarget) {
+      openNewPost();
+    }
+    // if (event.target !== event.currentTarget) return; // Prevent from responding to dragging events on bubbles
+    // const mouseData = { x: event.clientX, y: event.clientY };
+    // const newSeedling = {
+    //   x: mouseData.x,
+    //   y: mouseData.y,
+    //   title: "New Seedling",
+    //   size: Math.random() * 300 + 200,
+    // };
+    // setSeedlings([...seedlings, newSeedling]);
+  };
+  
+  const openInfo = () => setInfoOpen(true);
+  const closeInfo = () => setInfoOpen(false);
+
+  const openNewPost = () => setNewPostOpen(true);
+  const closeNewPost = () => setNewPostOpen(false);
+
+  const handleNewPostSubmit = (newSeedling) => { //add a new seedling only after a new post is submitted
+    setSeedlings([...seedlings, newSeedling]); // Add the new seedling to the state
+    closeNewPost(); // Close the overlay
   };
 
   return (
@@ -35,6 +55,36 @@ export const App = () => {
         width={206}
         height={38.4}
       />
+      {/* Info Overlay */}
+      <button className={styles.openInfoButton} onClick={openInfo}>i</button>
+      <Info isOpen={isInfoOpen} onClose={closeInfo}>
+        <Image
+          src="/assets/pollinator-logo.svg"
+          alt="Pollinator"
+          width={206}
+          height={38.4}
+        />
+        <div className={styles.infoIllustrations}>
+         <div>
+          <div className={styles.illustrationExplore}> EXPLORE </div>
+          <p className={styles.caption}> drag around to map your ideas</p>
+         </div>
+          <div>
+            <div className={styles.illustrationComment}> COMMENT</div>
+            <p className={styles.caption}> leave comments to help ideas grow</p>
+          </div>
+          <div>
+            <div className={styles.illustrationPlant}> PLANT</div>
+            <p className={styles.caption}>double click to add a new idea</p>
+          </div>
+        </div>
+      </Info>
+
+    {/* NewPost Overlay */}
+    {/* <button className={styles.newPostButton} onClick={openNewPost}>Add New Post</button> */}
+      <NewPost isOpen={isNewPostOpen} onClose={closeNewPost} onSubmit={handleNewPostSubmit}>
+      </NewPost>
+
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
       {seedlings.map(({ x, y, title, size }, i) => {
@@ -65,7 +115,7 @@ export const App = () => {
             }}
           />
         );
-      })}
+      })} {/* End of Seedling */}
     </div>
   );
 };

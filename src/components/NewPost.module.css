@@ -1,0 +1,43 @@
+.newPostOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other content */
+  }
+  
+  .newPostContent {
+    background: rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 15px;
+    width: 400px;
+    max-width: 80%;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .closeButton {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+    .caption {
+    font-size: 14px; /* Adjust font size as needed */
+    color: #6e6e6e; /* Change the text color */
+    text-align: center; /* Center-align captions */
+    margin-top: 5px; /* Space between illustration and caption */
+  }
+  
