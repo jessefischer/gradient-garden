@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-
+import Link from "next/link";
 import Info from "./Info";
 import NewPost from "./NewPost";
 
 import { SeedlingBubble } from "./SeedlingBubble";
 
 import styles from "./App.module.css";
+import { BubbleModal } from "./BubbleModal";
 
 export const App = () => {
   // React uses a concept called "state" to keep track of data that changes over time, instead of using
@@ -16,7 +17,9 @@ export const App = () => {
   // current value of the state, and the second element is a function that we can use to update the state.
   const [seedlings, setSeedlings] = useState([]);
   const [isInfoOpen, setInfoOpen] = useState(true); // Set Info Overlay to default when opening the garden for the first time
-  const [isNewPostOpen, setNewPostOpen] = useState(false); 
+  const [isNewPostOpen, setNewPostOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSeedling, setSelectedSeedling] = useState(null);
 
   const handleClick = (event) => {
     // open a new post overlay when double click instead of directly adding a new seedling
@@ -33,42 +36,55 @@ export const App = () => {
     // };
     // setSeedlings([...seedlings, newSeedling]);
   };
-  
+
   const openInfo = () => setInfoOpen(true);
   const closeInfo = () => setInfoOpen(false);
 
   const openNewPost = () => setNewPostOpen(true);
   const closeNewPost = () => setNewPostOpen(false);
 
-  const handleNewPostSubmit = (newSeedling) => { //add a new seedling only after a new post is submitted
+  const handleNewPostSubmit = (newSeedling) => {
+    //add a new seedling only after a new post is submitted
     setSeedlings([...seedlings, newSeedling]); // Add the new seedling to the state
     closeNewPost(); // Close the overlay
+  };
+
+  const handleSeedlingClick = (seedling) => {
+    setSelectedSeedling(seedling);
+    setIsModalOpen(true);
   };
 
   return (
     // React uses a language called JSX which is a fancy way of inserting HTML-like language into the middle of
     // JavaScript code. It compiles down into something similar to document.createElement('div').
     <div className={styles.app} onDoubleClick={handleClick}>
-      <Image
-        src="/assets/pollinator-logo.svg"
-        alt="Pollinator"
-        width={206}
-        height={38.4}
-      />
-      {/* Info Overlay */}
-      <button className={styles.openInfoButton} onClick={openInfo}>i</button>
-      <Info isOpen={isInfoOpen} onClose={closeInfo}>
+      <Link href="/">
         <Image
           src="/assets/pollinator-logo.svg"
           alt="Pollinator"
           width={206}
           height={38.4}
         />
+      </Link>
+      {/* Info overlay button */}
+      <button className={styles.openInfoButton} onClick={openInfo}>
+        i
+      </button>
+      {/* Info overlay */}
+      <Info isOpen={isInfoOpen} onClose={closeInfo}>
+        {/* <Image //<-- Removed logo in favor of some text
+          src="/assets/pollinator-logo.svg"
+          alt="Pollinator"
+          width={206}
+          height={38.4}
+        /> */}
+        <h1>How to use Pollinator</h1>
+        <h2>the garden for all your ideas</h2>
         <div className={styles.infoIllustrations}>
-         <div>
-          <div className={styles.illustrationExplore}> EXPLORE </div>
-          <p className={styles.caption}> drag around to map your ideas</p>
-         </div>
+          <div>
+            <div className={styles.illustrationExplore}> EXPLORE </div>
+            <p className={styles.caption}> drag around to map your ideas</p>
+          </div>
           <div>
             <div className={styles.illustrationComment}> COMMENT</div>
             <p className={styles.caption}> leave comments to help ideas grow</p>
@@ -79,15 +95,16 @@ export const App = () => {
           </div>
         </div>
       </Info>
-
-    {/* NewPost Overlay */}
-    {/* <button className={styles.newPostButton} onClick={openNewPost}>Add New Post</button> */}
-      <NewPost isOpen={isNewPostOpen} onClose={closeNewPost} onSubmit={handleNewPostSubmit}>
-      </NewPost>
-
+      {/* NewPost Overlay */}
+      {/* <button className={styles.newPostButton} onClick={openNewPost}>Add New Post</button> */}
+      <NewPost
+        isOpen={isNewPostOpen}
+        onClose={closeNewPost}
+        onSubmit={handleNewPostSubmit}
+      ></NewPost>
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
-      {seedlings.map(({ x, y, title, size }, i) => {
+      {seedlings.map(({ x, y, title, url, size }, i) => {
         // We have to define a unique key for each element in the resulting array in order for React to keep
         // track of them properly
         return (
@@ -113,9 +130,17 @@ export const App = () => {
               newSeedlings[i] = newSeedling;
               setSeedlings(newSeedlings);
             }}
+            onClick={() => handleSeedlingClick({ x, y, title, url, size })}
           />
         );
-      })} {/* End of Seedling */}
+      })}{" "}
+      {/* End of Seedling */}
+      {/* seedling info modal */}
+      <BubbleModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        seedlingData={selectedSeedling || {}}
+      />
     </div>
   );
 };

@@ -1,6 +1,5 @@
-
-import React from 'react';
-import styles from './Info.module.css';
+import React from "react";
+import styles from "./Info.module.css";
 const Info = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 

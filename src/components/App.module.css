@@ -16,19 +16,19 @@
 
   /* Info Button */
   .openInfoButton {
-    position: absolute; 
-    bottom: 20px; 
+    position: absolute;
+    bottom: 20px;
     right: 20px;
-    padding: 10px 25px; 
+    padding: 10px 25px;
     font-size: 30px;
-    background-color: #defbfc; 
-    border: #afe8ea; 
-    border-radius: 50%; 
-    cursor: pointer; 
+    background-color: #defbfc;
+    border: #afe8ea;
+    border-radius: 50%;
+    cursor: pointer;
     box-shadow: 0 4px 6px #28a6aa;
     transition: background-color 0.3s;
   }
-  
+
   .openInfoButton:hover {
     background-color: rgb(169, 221, 222); /* Darken on hover */
   }
@@ -42,11 +42,11 @@
   }
 
   .illustrationExplore {
-    width: 120px; 
-    height: 150px; 
+    width: 120px;
+    height: 150px;
     border-radius: 8px;
-    background: url('/assets/illustration-sample.png') center / cover; /* illustration can be gifs */
-    background-size: cover; 
+    background: url("/assets/illustration-sample.png") center / cover; /* illustration can be gifs */
+    background-size: cover;
     background-position: center;
     margin: 0 10px;
     display: flex;
@@ -55,11 +55,11 @@
   }
 
   .illustrationComment {
-    width: 120px; 
-    height: 150px; 
+    width: 120px;
+    height: 150px;
     border-radius: 8px;
-    background: url('/assets/illustration-sample.png') center / cover; 
-    background-size: cover; 
+    background: url("/assets/illustration-sample.png") center / cover;
+    background-size: cover;
     background-position: center;
     margin: 0 10px;
     display: flex;
@@ -68,11 +68,11 @@
   }
 
   .illustrationPlant {
-    width: 120px; 
-    height: 150px; 
+    width: 120px;
+    height: 150px;
     border-radius: 8px;
-    background: url('/assets/illustration-sample.png') center / cover; 
-    background-size: cover; 
+    background: url("/assets/illustration-sample.png") center / cover;
+    background-size: cover;
     background-position: center;
     margin: 0 10px;
     display: flex;
@@ -81,10 +81,11 @@
   }
 
   .caption {
-    font-size: 14px; 
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14px;
     color: #6e6e6e;
-    text-align: center; 
-    margin-top: 5px; 
+    text-align: center;
+    margin-top: 5px;
   }
   /* End of Info Overlay Style */
 }
