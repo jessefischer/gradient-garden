@@ -22,8 +22,16 @@ function randomColorFromPalette() {
 }
 
 // This is one bubble defining a seedling on the main app window.
-// The props are title, x and y coordinates (of the center) and size (diameter)
-export const SeedlingBubble = ({ title, x, y, size, setPosition, onClick }) => {
+// The props are title, url, x and y coordinates (of the center) and size (diameter)
+export const SeedlingBubble = ({
+  title,
+  url,
+  x,
+  y,
+  size,
+  setPosition,
+  onClick,
+}) => {
   const [background, setBackground] = useState();
   const [isDragging, setDragging] = useState(false); // Initial value is false
   const [dragStartPos, setDragStartPos] = useState(null); //setting a drag start to use mouseup for clicks
@@ -57,7 +65,7 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition, onClick }) => {
       Math.abs(e.clientY - dragStartPos.y) < 3
     ) {
       //if the mouse hasn't moved more than 3px, treat it as a click
-      onClick && onClick();
+      onClick && onClick({ title, url });
     }
     setDragging(false);
     setDragStartPos(null); //reset the drag start to 0

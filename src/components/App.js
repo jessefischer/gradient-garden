@@ -82,16 +82,25 @@ export const App = () => {
         <h2>the garden for all your ideas</h2>
         <div className={styles.infoIllustrations}>
           <div>
-            <div className={styles.illustrationExplore}> EXPLORE </div>
-            <p className={styles.caption}> drag around to map your ideas</p>
+            <div className={styles.illustrationPlant}></div>
+            <div className={styles.caption}>
+              <h4>PLANT</h4>
+              <p>double click to add a new idea</p>
+            </div>
           </div>
           <div>
-            <div className={styles.illustrationComment}> COMMENT</div>
-            <p className={styles.caption}> leave comments to help ideas grow</p>
+            <div className={styles.illustrationComment}></div>
+            <div className={styles.caption}>
+              <h4>COMMENT</h4>
+              <p>leave comments to help ideas grow</p>
+            </div>
           </div>
           <div>
-            <div className={styles.illustrationPlant}> PLANT</div>
-            <p className={styles.caption}>double click to add a new idea</p>
+            <div className={styles.illustrationExplore}></div>
+            <div className={styles.caption}>
+              <h4>EXPLORE</h4>
+              <p>drag around to map your ideas</p>
+            </div>
           </div>
         </div>
       </Info>
@@ -111,6 +120,7 @@ export const App = () => {
           <SeedlingBubble
             key={i}
             title={title}
+            url={url}
             x={x}
             y={y}
             size={size}
@@ -120,6 +130,7 @@ export const App = () => {
                 x: newX,
                 y: newY,
                 title,
+                url,
                 size,
               };
               // This seems cumbersome but is necessary because if we simply mutate one of the

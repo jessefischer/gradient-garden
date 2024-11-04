@@ -4,7 +4,7 @@ import styles from "./BubbleModal.module.css";
 export const BubbleModal = ({ isOpen, onClose, seedlingData }) => {
   if (!isOpen) return null;
 
-  const { title, url } = seedlingData;
+  const { title = "", url = "" } = seedlingData || {};
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -14,16 +14,16 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData }) => {
         </button>
 
         <h2>{title}</h2>
-
-        {/* Link preview image goes here */}
-
-        {url && (
+        <div className={styles.linkPreviewContainer}>
+          <div className={styles.linkPreview}>
+            {/* Link preview image goes here */}
+          </div>
           <div className={styles.linkContainer}>
             <a href={url} target="_blank" rel="noopener noreferrer">
-              Visit Link
+              {url}
             </a>
           </div>
-        )}
+        </div>
 
         <div className={styles.reactionsSection}>
           <h3>Reactions</h3>
