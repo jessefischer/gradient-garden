@@ -78,9 +78,69 @@
   text-decoration: underline;
 }
 
-.commentsSection,
 .reactionsSection {
+  margin: 0.5rem 0 0 0;
+}
+
+.commentsSection {
   margin: 1rem 0;
   padding-top: 0.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.reactionButtons {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.reactionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+}
+
+.reactionButton:hover {
+  background: #f5f5f5;
+  transform: scale(1.05);
+}
+
+.reactionButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.reacted {
+  background-color: rgba(76, 175, 80, 0.5);
+}
+
+.reacted:hover {
+  transform: none;
+  background-color: rgba(76, 175, 80, 0.5);
+  transform: scale(1.05);
+}
+
+.emoji {
+  font-size: 1.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.reactionMessage {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.5rem 0;
+  font-style: italic;
+  text-align: center;
 }

@@ -20,6 +20,23 @@ export const App = () => {
   const [isNewPostOpen, setNewPostOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSeedling, setSelectedSeedling] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  // generate a simple user id when the app loads
+  useEffect(() => {
+    const generateUserId = () => {
+      const storedUserId = localStorage.getItem("userId");
+      if (storedUserId) {
+        setUserId(storedUserId);
+      } else {
+        const newUserId = "user_" + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("userId", newUserId);
+        setUserId(newUserId);
+      }
+    };
+
+    generateUserId();
+  }, []);
 
   const handleClick = (event) => {
     // open a new post overlay when double click instead of directly adding a new seedling
@@ -151,6 +168,7 @@ export const App = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         seedlingData={selectedSeedling || {}}
+        userId={userId}
       />
     </div>
   );
