@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styles from "./NewPost.module.css";
+import { randomColorFromPalette } from "@/util/color";
 
-const NewPost = ({ isOpen, onClose, onSubmit }) => {
+const NewPost = ({ isOpen, onClose, onSubmit, mousePosition }) => {
   const [title, setTitle] = useState("");
   const [url, setURL] = useState("");
 
@@ -10,11 +11,12 @@ const NewPost = ({ isOpen, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newSeedling = {
-      x: Math.random() * 800,
-      y: Math.random() * 600,
+      x: mousePosition.x,
+      y: mousePosition.y,
       title,
       url,
       size: 200, //default size
+      color: randomColorFromPalette(),
     };
     onSubmit(newSeedling); // Call the onSubmit function passed from App.js
     setTitle("");

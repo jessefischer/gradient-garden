@@ -1,26 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./SeedlingBubble.module.css";
 
-// Define an array of customized colors
-const FALL_PALETTE = [
-  "#FD699F", //pink
-  "#DFA6A3", //grey pink
-  "#FFDB00", //bright yellow
-  "#B2D400", //bright green
-  "#FC840D", //bright orange
-  "#E38100", //dark orange
-  "#BF4E47", //dark red
-  "#B34F05", //brown
-  "#D9A782", //grey brown
-  "#90D4FF", //sky blue
-  "#5E95DA", //blue
-];
-
-function randomColorFromPalette() {
-  const randomIndex = Math.floor(Math.random() * FALL_PALETTE.length);
-  return FALL_PALETTE[randomIndex];
-}
-
 // This is one bubble defining a seedling on the main app window.
 // The props are title, url, x and y coordinates (of the center) and size (diameter)
 export const SeedlingBubble = ({
@@ -29,6 +9,7 @@ export const SeedlingBubble = ({
   x,
   y,
   size,
+  color,
   setPosition,
   onClick,
   syncPosition,
@@ -41,12 +22,9 @@ export const SeedlingBubble = ({
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
   // new random colors on every bubble every time the user adds a new bubble.
   useEffect(() => {
-    const newBackground = `radial-gradient(closest-side, ${randomColorFromPalette()} 50%, rgba(0, 0, 0, 0))`; //changed to single color gradient
-    // const color1 = randomColorFromPalette();
-    // const color2 = randomColorFromPalette();
-    // const newBackground = `radial-gradient(closest-side, ${color1} 70%, ${color2} 90%, rgba(0, 0, 0, 0))`;
+    const newBackground = `radial-gradient(closest-side, ${color} 50%, rgba(0, 0, 0, 0))`; //changed to single color gradient
     setBackground(newBackground);
-  }, []);
+  }, [color]);
 
   const handleMouseDown = function (e) {
     setDragging(true);

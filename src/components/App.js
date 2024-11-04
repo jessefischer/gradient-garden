@@ -23,12 +23,16 @@ export const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSeedling, setSelectedSeedling] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [mousePosition, setMousePosition] = useState();
 
+  // Set up a listener to the Firebase database to keep the seedlings state up to date
   useEffect(() => {
     const seedlingsRef = ref(database, "/seedlings");
     onValue(seedlingsRef, (snapshot) => {
       const data = snapshot.val();
-      setSeedlings(data);
+      if (data) {
+        setSeedlings(data);
+      }
     });
   }, []);
 
@@ -51,6 +55,7 @@ export const App = () => {
   const handleClick = (event) => {
     // open a new post overlay when double click instead of directly adding a new seedling
     if (event.target === event.currentTarget) {
+      setMousePosition({ x: event.clientX, y: event.clientY });
       openNewPost();
     }
   };
@@ -130,10 +135,11 @@ export const App = () => {
         isOpen={isNewPostOpen}
         onClose={closeNewPost}
         onSubmit={handleNewPostSubmit}
+        mousePosition={mousePosition}
       ></NewPost>
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
-      {Object.entries(seedlings).map(([key,{ x, y, title, url, size }]) => {
+      {Object.entries(seedlings).map(([key,{ x, y, title, url, size, color }]) => {
         // We have to define a unique key for each element in the resulting array in order for React to keep
         // track of them properly
         return (
@@ -144,6 +150,7 @@ export const App = () => {
             x={x}
             y={y}
             size={size}
+            color={color}
             setPosition={({ x: newX, y: newY }) => {
               const newSeedling = {
                 x: newX,
@@ -151,6 +158,7 @@ export const App = () => {
                 title,
                 url,
                 size,
+                color,
               };
               // This seems cumbersome but is necessary because if we simply mutate one of the
               // elements of newSeedlings, React won't notice that it's been updated and therefore
