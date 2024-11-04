@@ -8,6 +8,8 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
     "☀️": { count: 0, users: [] },
     "💩": { count: 0, users: [] },
   });
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
 
   // load saved reactions when modal opens
   useEffect(() => {
@@ -25,6 +27,15 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
           "☀️": { count: 0, users: [] },
           "💩": { count: 0, users: [] },
         });
+      }
+
+      const savedComments = localStorage.getItem(
+        `comments_${seedlingData.url}`
+      );
+      if (savedComments) {
+        setComments(JSON.parse(savedComments));
+      } else {
+        setComments([]);
       }
     }
   }, [isOpen, seedlingData?.url]);
@@ -59,6 +70,32 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
 
       return newReactions;
     });
+  };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    if (!comment.trim() || !userId) return;
+
+    const newComment = {
+      id: Date.now(),
+      text: comment,
+      userId,
+      timestamp: new Date().toISOString(),
+    };
+
+    setComments((prev) => {
+      const updatedComments = [...prev, newComment];
+      // save to localStorage
+      if (seedlingData?.url) {
+        localStorage.setItem(
+          `comments_${seedlingData.url}`,
+          JSON.stringify(updatedComments)
+        );
+      }
+      return updatedComments;
+    });
+
+    setComment("");
   };
 
   return (
@@ -110,7 +147,31 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
 
         <div className={styles.commentsSection}>
           <h3>Comments</h3>
-          {/* add comment functionality here */}
+          <form onSubmit={handleCommentSubmit} className={styles.commentForm}>
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Add a comment..."
+              className={styles.commentInput}
+            />
+            <button
+              type="submit"
+              className={styles.commentSubmitButton}
+              disabled={!comment.trim()}
+            >
+              Submit
+            </button>
+          </form>
+          <div className={styles.commentsList}>
+            {[...comments].reverse().map((comment) => (
+              <div key={comment.id} className={styles.commentItem}>
+                {/* <span className={styles.commentUser}>
+                  User {comment.userId}
+                </span> */}
+                <p className={styles.commentText}>{comment.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
