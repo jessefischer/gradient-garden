@@ -140,7 +140,7 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
           </div>
           {hasUserReactedToLink() && (
             <p className={styles.reactionMessage}>
-              You've already reacted to this link
+              You&apos;ve already reacted to this link
             </p>
           )}
         </div>
