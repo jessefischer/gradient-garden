@@ -31,6 +31,7 @@ export const SeedlingBubble = ({
   size,
   setPosition,
   onClick,
+  syncPosition,
 }) => {
   const [background, setBackground] = useState();
   const [isDragging, setDragging] = useState(false); // Initial value is false
@@ -69,6 +70,7 @@ export const SeedlingBubble = ({
     }
     setDragging(false);
     setDragStartPos(null); //reset the drag start to 0
+    syncPosition();
   };
 
   return (
