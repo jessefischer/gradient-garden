@@ -19,8 +19,8 @@ export const Homepage = () => {
           <Image
             src="/assets/pollinator-logo.svg"
             alt="Pollinator"
-            width={515}
-            height={96}
+            width={860}
+            height={240}
           />
           <Link href="/garden">
             <button>Enter the garden</button>

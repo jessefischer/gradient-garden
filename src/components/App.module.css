@@ -13,4 +13,91 @@
     z-index: 20;
     position: relative;
   }
+
+  /* Info Button */
+  .openInfoButton {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 25px;
+    font-size: 30px;
+    background-color: #defbfc;
+    border: #afe8ea;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 6px #28a6aa;
+    transition: background-color 0.3s;
+  }
+
+  .openInfoButton:hover {
+    background-color: rgb(169, 221, 222); /* Darken on hover */
+  }
+
+  /* Info Overlay Styles */
+  .infoIllustrations {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem;
+    color: coral;
+    padding: 0 2rem;
+  }
+
+  .illustrationExplore {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 8px;
+    background: url("/assets/explore.png") center / cover; /* illustration can be gifs */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .illustrationComment {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 8px;
+    background: url("/assets/comment.png") center / cover;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .illustrationPlant {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 8px;
+    background: url("/assets/plant.png") center / cover;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .caption {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14px;
+    color: #6e6e6e;
+    text-align: center;
+
+    & h4 {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: black;
+      margin: 0.5rem 0;
+    }
+
+    & p {
+      margin-top: 0.2rem;
+    }
+  }
+  /* End of Info Overlay Style */
 }

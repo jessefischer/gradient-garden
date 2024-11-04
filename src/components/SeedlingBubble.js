@@ -22,24 +22,34 @@ function randomColorFromPalette() {
 }
 
 // This is one bubble defining a seedling on the main app window.
-// The props are title, x and y coordinates (of the center) and size (diameter)
-export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
+// The props are title, url, x and y coordinates (of the center) and size (diameter)
+export const SeedlingBubble = ({
+  title,
+  url,
+  x,
+  y,
+  size,
+  setPosition,
+  onClick,
+}) => {
   const [background, setBackground] = useState();
   const [isDragging, setDragging] = useState(false); // Initial value is false
+  const [dragStartPos, setDragStartPos] = useState(null); //setting a drag start to use mouseup for clicks
 
   // We use the useEffect hook to run some code when the component is first rendered.
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
   // new random colors on every bubble every time the user adds a new bubble.
   useEffect(() => {
-    const color1 = randomColorFromPalette();
-    const color2 = randomColorFromPalette();
-
-    const newBackground = `radial-gradient(closest-side, ${color1} 70%, ${color2} 90%, rgba(0, 0, 0, 0))`;
+    const newBackground = `radial-gradient(closest-side, ${randomColorFromPalette()} 50%, rgba(0, 0, 0, 0))`; //changed to single color gradient
+    // const color1 = randomColorFromPalette();
+    // const color2 = randomColorFromPalette();
+    // const newBackground = `radial-gradient(closest-side, ${color1} 70%, ${color2} 90%, rgba(0, 0, 0, 0))`;
     setBackground(newBackground);
   }, []);
 
   const handleMouseDown = function (e) {
     setDragging(true);
+    setDragStartPos({ x: e.clientX, y: e.clientY }); //store the start of the drag
   };
 
   const handleMouseMove = function (e) {
@@ -48,8 +58,17 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
     }
   };
 
-  const handleMouseUp = function () {
+  const handleMouseUp = function (e) {
+    if (
+      dragStartPos &&
+      Math.abs(e.clientX - dragStartPos.x) < 3 &&
+      Math.abs(e.clientY - dragStartPos.y) < 3
+    ) {
+      //if the mouse hasn't moved more than 3px, treat it as a click
+      onClick && onClick({ title, url });
+    }
     setDragging(false);
+    setDragStartPos(null); //reset the drag start to 0
   };
 
   return (
@@ -63,6 +82,7 @@ export const SeedlingBubble = ({ title, x, y, size, setPosition }) => {
         height: size,
         width: size,
         background: background,
+        zIndex: isDragging ? 1000 : "auto", // move bubble to toppest layer when dragged
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
