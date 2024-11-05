@@ -106,7 +106,10 @@ export const App = () => {
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
       {Object.entries(seedlings).map(
-        ([key, { x, y, title, url, size, color, comments, reactions }]) => {
+        ([
+          key,
+          { x, y, title, url, imgSrc, size, color, comments, reactions },
+        ]) => {
           // We have to define a unique key for each element in the resulting array in order for React to keep
           // track of them properly
           return (
@@ -118,16 +121,18 @@ export const App = () => {
               y={y}
               size={size}
               color={color}
+              imgSrc={imgSrc}
               setPosition={({ x: newX, y: newY }) => {
                 const newSeedling = {
                   x: newX,
                   y: newY,
                   title,
                   url,
+                  imgSrc,
                   size,
                   color,
-                  ...(comments ? {comments} : {}),
-                  ...(reactions ? {reactions} : {}),
+                  ...(comments ? { comments } : {}),
+                  ...(reactions ? { reactions } : {}),
                 };
                 // This seems cumbersome but is necessary because if we simply mutate one of the
                 // elements of newSeedlings, React won't notice that it's been updated and therefore
