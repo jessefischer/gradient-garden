@@ -13,7 +13,7 @@
     z-index: 20;
     position: relative;
   }
-  
+
   .openInfoButton {
     font-family: "Bricolage Grotesque", sans-serif;
     position: absolute;
@@ -28,8 +28,17 @@
     box-shadow: 0 4px 6px #28a6aa;
     transition: background-color 0.3s;
   }
-  
+
   .openInfoButton:hover {
     background-color: rgb(169, 221, 222); /* Darken on hover */
   }
+}
+
+.gooBubbles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  filter: url(#goo);
+  opacity: 0.5;
 }
