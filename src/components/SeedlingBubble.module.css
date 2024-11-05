@@ -9,6 +9,11 @@
 
   opacity: 0;
   animation: popup 1s ease-out forwards;
+
+  background-position: center center;
+  background-size: cover;
+  background-clip: border-box;
+  background-repeat: no-repeat;
 }
 
 @keyframes popup {
@@ -16,7 +21,7 @@
     transform: scale(0);
     opacity: 0;
   }
-  80%{
+  80% {
     transform: scale(1);
     opacity: 1;
   }

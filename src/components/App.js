@@ -9,6 +9,9 @@ import { SeedlingBubble } from "./SeedlingBubble";
 import { BubbleModal } from "./BubbleModal";
 import styles from "./App.module.css";
 
+const COMMENTS_WEIGHT = 50;
+const REACTIONS_WEIGHT = 20;
+
 export const App = () => {
   // React uses a concept called "state" to keep track of data that changes over time, instead of using
   // global variables like in P5. This state is local to the particular component it's defined in, in this
@@ -110,6 +113,17 @@ export const App = () => {
           key,
           { x, y, title, url, imgSrc, size, color, comments, reactions },
         ]) => {
+          const numComments = comments ? Object.keys(comments).length : 0;
+          const numReactions = reactions
+            ? Object.keys(reactions).reduce(
+                (acc, cur) => acc + Object.keys(reactions[cur]).length,
+                0
+              )
+            : 0;
+          const adjustedSize =
+            size +
+            numComments * COMMENTS_WEIGHT +
+            numReactions * REACTIONS_WEIGHT;
           // We have to define a unique key for each element in the resulting array in order for React to keep
           // track of them properly
           return (
@@ -119,7 +133,7 @@ export const App = () => {
               url={url}
               x={x}
               y={y}
-              size={size}
+              size={adjustedSize}
               color={color}
               imgSrc={imgSrc}
               setPosition={({ x: newX, y: newY }) => {
