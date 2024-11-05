@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { database } from "@/util/firebase";
+import { set, push, ref, onValue } from "firebase/database";
 import Image from "next/image";
 import Link from "next/link";
 import Info from "./Info";
@@ -15,12 +17,24 @@ export const App = () => {
   // instance the App component. Whenever the state changes, the whole component re-renders. We can use
   // the `useState` hook to create a piece of state that we can update. The first element in the array is the
   // current value of the state, and the second element is a function that we can use to update the state.
-  const [seedlings, setSeedlings] = useState([]);
+  const [seedlings, setSeedlings] = useState({});
   const [isInfoOpen, setInfoOpen] = useState(true); // Set Info Overlay to default when opening the garden for the first time
   const [isNewPostOpen, setNewPostOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSeedling, setSelectedSeedling] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [mousePosition, setMousePosition] = useState();
+
+  // Set up a listener to the Firebase database to keep the seedlings state up to date
+  useEffect(() => {
+    const seedlingsRef = ref(database, "/seedlings");
+    onValue(seedlingsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setSeedlings(data);
+      }
+    });
+  }, []);
 
   // generate a simple user id when the app loads
   useEffect(() => {
@@ -41,17 +55,9 @@ export const App = () => {
   const handleClick = (event) => {
     // open a new post overlay when double click instead of directly adding a new seedling
     if (event.target === event.currentTarget) {
+      setMousePosition({ x: event.clientX, y: event.clientY });
       openNewPost();
     }
-    // if (event.target !== event.currentTarget) return; // Prevent from responding to dragging events on bubbles
-    // const mouseData = { x: event.clientX, y: event.clientY };
-    // const newSeedling = {
-    //   x: mouseData.x,
-    //   y: mouseData.y,
-    //   title: "New Seedling",
-    //   size: Math.random() * 300 + 200,
-    // };
-    // setSeedlings([...seedlings, newSeedling]);
   };
 
   const openInfo = () => setInfoOpen(true);
@@ -62,7 +68,9 @@ export const App = () => {
 
   const handleNewPostSubmit = (newSeedling) => {
     //add a new seedling only after a new post is submitted
-    setSeedlings([...seedlings, newSeedling]); // Add the new seedling to the state
+    const seedlingsRef = ref(database, "seedlings");
+    const newSeedlingRef = push(seedlingsRef);
+    set(newSeedlingRef, newSeedling);
     closeNewPost(); // Close the overlay
   };
 
@@ -127,36 +135,42 @@ export const App = () => {
         isOpen={isNewPostOpen}
         onClose={closeNewPost}
         onSubmit={handleNewPostSubmit}
+        mousePosition={mousePosition}
       ></NewPost>
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
-      {seedlings.map(({ x, y, title, url, size }, i) => {
+      {Object.entries(seedlings).map(([key,{ x, y, title, url, size, color }]) => {
         // We have to define a unique key for each element in the resulting array in order for React to keep
         // track of them properly
         return (
           <SeedlingBubble
-            key={i}
+            key={key}
             title={title}
             url={url}
             x={x}
             y={y}
             size={size}
+            color={color}
             setPosition={({ x: newX, y: newY }) => {
-              console.log("setPosition");
               const newSeedling = {
                 x: newX,
                 y: newY,
                 title,
                 url,
                 size,
+                color,
               };
               // This seems cumbersome but is necessary because if we simply mutate one of the
               // elements of newSeedlings, React won't notice that it's been updated and therefore
               // won't re-render the components. You have to create a whole new array from scratch
               // in order for it to re-render.
-              const newSeedlings = [...seedlings];
-              newSeedlings[i] = newSeedling;
+              const newSeedlings = {...seedlings};
+              newSeedlings[key] = newSeedling;
               setSeedlings(newSeedlings);
+            }}
+            syncPosition={() => {
+              const seedlingsRef = ref(database, `seedlings/${key}`);
+              set(seedlingsRef, seedlings[key]);
             }}
             onClick={() => handleSeedlingClick({ x, y, title, url, size })}
           />
