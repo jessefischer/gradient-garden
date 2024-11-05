@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./BubbleModal.module.css";
-import { ref, set, push } from "firebase/database";
+import { ref, set, push, remove } from "firebase/database";
 import { database } from "@/util/firebase";
 
 const REACTION_EMOJI_MAP = {
@@ -16,14 +16,9 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
   const comments = seedlingData?.comments || [];
   const reactions = seedlingData?.reactions || {};
 
-  console.log({ reactions });
-
   const { title = "", url = "" } = seedlingData || {};
 
-  // check if user has already reacted to this link
-  // const hasUserReactedToLink = Object.values(reactions).includes(userId);
-
-  const handleReaction = (reaction) => {
+  const handleReaction = (reaction, invert) => {
     if (!userId) return; // prevent reactions if no user id
 
     // Save reaction to database
@@ -31,8 +26,15 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
       database,
       `seedlings/${seedlingKey}/reactions/${reaction}`
     );
-    const newReactionRef = push(reactionListRef);
-    set(newReactionRef, userId);
+    if (invert) {
+      const newReactionRef = push(reactionListRef);
+      set(newReactionRef, userId);
+    } else {
+      // remove user id from reaction
+      const userReactionKey = Object.entries(reactions[reaction] || {}).find(([, value]) => value === userId)?.[0];
+      const userReactionRef = ref(database, `seedlings/${seedlingKey}/reactions/${reaction}/${userReactionKey}`);
+      remove(userReactionRef);
+    }
   };
 
   const handleCommentSubmit = (e) => {
@@ -84,8 +86,7 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
                   className={`${styles.reactionButton} ${
                     selected ? styles.reacted : ""
                   }`}
-                  onClick={() => handleReaction(reaction)}
-                  disabled={selected}
+                  onClick={() => handleReaction(reaction, !selected)}
                   title={
                     selected ? "You've already reacted to this link" : "React!"
                   }
