@@ -17,7 +17,6 @@ const NewPost = ({ isOpen, onClose, onSubmit, mousePosition }) => {
     const imgSrc = Array.isArray(ogImageData)
       ? ogImageData?.[0].url
       : ogImageData?.url;
-    console.log({ ogImageData, imgSrc });
     const newSeedling = {
       x: mousePosition.x,
       y: mousePosition.y,
