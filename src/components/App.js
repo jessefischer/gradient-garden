@@ -21,7 +21,7 @@ export const App = () => {
   const [isInfoOpen, setInfoOpen] = useState(true); // Set Info Overlay to default when opening the garden for the first time
   const [isNewPostOpen, setNewPostOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSeedling, setSelectedSeedling] = useState(null);
+  const [selectedSeedlingKey, setSelectedSeedlingKey] = useState(null);
   const [userId, setUserId] = useState(null);
   const [mousePosition, setMousePosition] = useState();
 
@@ -74,8 +74,8 @@ export const App = () => {
     closeNewPost(); // Close the overlay
   };
 
-  const handleSeedlingClick = (seedling) => {
-    setSelectedSeedling(seedling);
+  const handleSeedlingClick = (seedlingKey) => {
+    setSelectedSeedlingKey(seedlingKey);
     setIsModalOpen(true);
   };
 
@@ -172,18 +172,18 @@ export const App = () => {
               const seedlingsRef = ref(database, `seedlings/${key}`);
               set(seedlingsRef, seedlings[key]);
             }}
-            onClick={() => handleSeedlingClick({ x, y, title, url, size })}
+            onClick={() => handleSeedlingClick(key)}
           />
         );
       })}{" "}
       {/* End of Seedling */}
       {/* seedling info modal */}
-      <BubbleModal
-        isOpen={isModalOpen}
+      {isModalOpen ? <BubbleModal
         onClose={() => setIsModalOpen(false)}
-        seedlingData={selectedSeedling || {}}
+        seedlingData={seedlings[selectedSeedlingKey] || {}}
+        seedlingKey={selectedSeedlingKey}
         userId={userId}
-      />
+      />: null}
     </div>
   );
 };

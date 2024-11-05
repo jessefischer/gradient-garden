@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styles from "./BubbleModal.module.css";
+import { ref, set, push } from "firebase/database";
+import { database } from "@/util/firebase";
 
-export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
+export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
   const [reactions, setReactions] = useState({
     "🌸": { count: 0, users: [] },
     "💧": { count: 0, users: [] },
@@ -9,38 +11,31 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
     "💩": { count: 0, users: [] },
   });
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
+
+  const comments = seedlingData?.comments || [];
+
+  // const [comments, setComments] = useState([]);
 
   // load saved reactions when modal opens
-  useEffect(() => {
-    if (isOpen && seedlingData?.url) {
-      const savedReactions = localStorage.getItem(
-        `reactions_${seedlingData.url}`
-      );
-      if (savedReactions) {
-        setReactions(JSON.parse(savedReactions));
-      } else {
-        // reset reactions when opening a new link
-        setReactions({
-          "🌸": { count: 0, users: [] },
-          "💧": { count: 0, users: [] },
-          "☀️": { count: 0, users: [] },
-          "💩": { count: 0, users: [] },
-        });
-      }
+  // useEffect(() => {
+  //   if (isOpen && seedlingData?.url) {
+  //     const savedReactions = localStorage.getItem(
+  //       `reactions_${seedlingData.url}`
+  //     );
+  //     if (savedReactions) {
+  //       setReactions(JSON.parse(savedReactions));
+  //     } else {
+  //       // reset reactions when opening a new link
+  //       setReactions({
+  //         "🌸": { count: 0, users: [] },
+  //         "💧": { count: 0, users: [] },
+  //         "☀️": { count: 0, users: [] },
+  //         "💩": { count: 0, users: [] },
+  //       });
+  //     }
+  //   }
+  // }, [isOpen, seedlingData?.url]);
 
-      const savedComments = localStorage.getItem(
-        `comments_${seedlingData.url}`
-      );
-      if (savedComments) {
-        setComments(JSON.parse(savedComments));
-      } else {
-        setComments([]);
-      }
-    }
-  }, [isOpen, seedlingData?.url]);
-
-  if (!isOpen) return null;
 
   const { title = "", url = "" } = seedlingData || {};
 
@@ -83,19 +78,10 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
       timestamp: new Date().toISOString(),
     };
 
-    setComments((prev) => {
-      const updatedComments = [...prev, newComment];
-      // save to localStorage
-      if (seedlingData?.url) {
-        localStorage.setItem(
-          `comments_${seedlingData.url}`,
-          JSON.stringify(updatedComments)
-        );
-      }
-      return updatedComments;
-    });
-
-    setComment("");
+    // Save comment to Firebase
+    const commentListRef = ref(database, `seedlings/${seedlingKey}/comments`);
+    const newCommentRef = push(commentListRef);
+    set(newCommentRef, newComment);
   };
 
   return (
@@ -163,7 +149,7 @@ export const BubbleModal = ({ isOpen, onClose, seedlingData, userId }) => {
             </button>
           </form>
           <div className={styles.commentsList}>
-            {[...comments].reverse().map((comment) => (
+            {[...Object.values(comments)].reverse().map((comment) => (
               <div key={comment.id} className={styles.commentItem}>
                 {/* <span className={styles.commentUser}>
                   User {comment.userId}
