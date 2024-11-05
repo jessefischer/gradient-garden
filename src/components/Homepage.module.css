@@ -1,6 +1,6 @@
 .container {
-  --color-bg1: rgb(147, 207, 187);
-  --color-bg2: rgb(35, 79, 47);
+  --color-bg1: rgb(104, 156, 139);
+  --color-bg2: rgb(51, 76, 58);
   --color1: 52, 78, 65;
   --color2: 33, 250, 144;
   --color3: 253, 255, 243;
@@ -200,10 +200,10 @@
   & button {
     font-family: "times new roman", serif;
     font-style: italic;
-    font-size: 2rem;
-    padding: 2rem 4rem;
+    font-size: 1.8rem;
+    padding: 2rem 4.8rem;
     border-radius: 1rem;
-    color: rgb(0, 0, 0);
+    color: rgba(0, 0, 0, 1);
     background-color: rgba(255, 255, 255, 0.1);
     border: 0rem solid #fff;
   }
