@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import GooEffect from "./GooEffect"; 
 import styles from "./SeedlingBubble.module.css";
 
 // This is one bubble defining a seedling on the main app window.
@@ -22,7 +23,7 @@ export const SeedlingBubble = ({
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
   // new random colors on every bubble every time the user adds a new bubble.
   useEffect(() => {
-    const newBackground = `radial-gradient(closest-side, ${color} 50%, rgba(0, 0, 0, 0))`; //changed to single color gradient
+    const newBackground = `radial-gradient(closest-side, ${color} 30%, rgba(0, 0, 0, 0))`; //changed to single color gradient
     setBackground(newBackground);
   }, [color]);
 
@@ -52,7 +53,7 @@ export const SeedlingBubble = ({
   };
 
   return (
-    <div
+    <><GooEffect /><div
       // React uses "className" instead of the normal "class" because "class" is already a reserved keyword
       // in JavaScript with a different meaning.
       className={styles.seedlingBubble}
@@ -63,14 +64,15 @@ export const SeedlingBubble = ({
         width: size,
         background: background,
         zIndex: isDragging ? 1000 : "auto", // move bubble to toppest layer when dragged
+        // filter: "url(#goo) blur(10px)", //the goo filter is not working so I commented it out... -md
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
       {/* We use the curly braces to inject the props into the JSX output, so that
-          when any of the props change value, the HTML will update or "react" automatically */}
+      when any of the props change value, the HTML will update or "react" automatically */}
       {title}
-    </div>
+    </div></>
   );
 };

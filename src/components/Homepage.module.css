@@ -187,20 +187,22 @@
   /* headline styles */
   & h1 {
     font-family: "Bricolage Grotesque", sans-serif;
-    font-size: 12rem;
+    font-size: 2rem;
     /* -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 0.1rem #fff; Wanted to make this stroke effect for HL but the font isn't built right for it */
     color: rgba(255, 255, 255, 0.6);
-    font-weight: 800;
-    border-radius: 0.2rem;
+    font-weight: 700;
+    /* border-radius: 0.2rem; */
     margin: 0;
+    margin-top: -1em;
   }
 
   /* Button styles */
   & button {
-    font-family: "times new roman", serif;
-    font-style: italic;
-    font-size: 1.8rem;
+    /* font-family: "times new roman", serif;
+    font-style: italic; */
+    font-family: "Courier New", Courier, monospace; /* changed to this to better match the garden page style*/
+    font-size: 1.5rem;
     padding: 2rem 4.8rem;
     border-radius: 1rem;
     color: rgba(0, 0, 0, 1);
