@@ -3,68 +3,36 @@ import styles from "./BubbleModal.module.css";
 import { ref, set, push } from "firebase/database";
 import { database } from "@/util/firebase";
 
+const REACTION_EMOJI_MAP = {
+  "🌸": "flower",
+  "💧": "water",
+  "☀️": "sun",
+  "💩": "poop",
+};
+
 export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
-  const [reactions, setReactions] = useState({
-    "🌸": { count: 0, users: [] },
-    "💧": { count: 0, users: [] },
-    "☀️": { count: 0, users: [] },
-    "💩": { count: 0, users: [] },
-  });
   const [comment, setComment] = useState("");
 
   const comments = seedlingData?.comments || [];
+  const reactions = seedlingData?.reactions || {};
 
-  // const [comments, setComments] = useState([]);
-
-  // load saved reactions when modal opens
-  // useEffect(() => {
-  //   if (isOpen && seedlingData?.url) {
-  //     const savedReactions = localStorage.getItem(
-  //       `reactions_${seedlingData.url}`
-  //     );
-  //     if (savedReactions) {
-  //       setReactions(JSON.parse(savedReactions));
-  //     } else {
-  //       // reset reactions when opening a new link
-  //       setReactions({
-  //         "🌸": { count: 0, users: [] },
-  //         "💧": { count: 0, users: [] },
-  //         "☀️": { count: 0, users: [] },
-  //         "💩": { count: 0, users: [] },
-  //       });
-  //     }
-  //   }
-  // }, [isOpen, seedlingData?.url]);
-
+  console.log({ reactions });
 
   const { title = "", url = "" } = seedlingData || {};
 
   // check if user has already reacted to this link
-  const hasUserReactedToLink = () => {
-    return Object.values(reactions).some(({ users }) => users.includes(userId));
-  };
+  // const hasUserReactedToLink = Object.values(reactions).includes(userId);
 
-  const handleReaction = (emoji) => {
+  const handleReaction = (reaction) => {
     if (!userId) return; // prevent reactions if no user id
-    if (hasUserReactedToLink()) return; // prevent multiple reactions to same link
 
-    setReactions((prev) => {
-      // create new reaction state
-      const newReactions = {
-        ...prev,
-        [emoji]: {
-          count: prev[emoji].count + 1,
-          users: [...prev[emoji].users, userId],
-        },
-      };
-
-      // save to localStorage
-      if (url) {
-        localStorage.setItem(`reactions_${url}`, JSON.stringify(newReactions));
-      }
-
-      return newReactions;
-    });
+    // Save reaction to database
+    const reactionListRef = ref(
+      database,
+      `seedlings/${seedlingKey}/reactions/${reaction}`
+    );
+    const newReactionRef = push(reactionListRef);
+    set(newReactionRef, userId);
   };
 
   const handleCommentSubmit = (e) => {
@@ -106,29 +74,27 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
         <div className={styles.reactionsSection}>
           {/* <h3>Reactions</h3> */}
           <div className={styles.reactionButtons}>
-            {Object.entries(reactions).map(([emoji, { users }]) => (
-              <button
-                key={emoji}
-                className={`${styles.reactionButton} ${
-                  users.includes(userId) ? styles.reacted : ""
-                }`}
-                onClick={() => handleReaction(emoji)}
-                disabled={hasUserReactedToLink()}
-                title={
-                  hasUserReactedToLink()
-                    ? "You've already reacted to this link"
-                    : "React!"
-                }
-              >
-                <span className={styles.emoji}>{emoji}</span>
-              </button>
-            ))}
+            {Object.entries(REACTION_EMOJI_MAP).map(([emoji, reaction]) => {
+              const selected = Object.values(
+                reactions[reaction] || {}
+              )?.includes(userId);
+              return (
+                <button
+                  key={emoji}
+                  className={`${styles.reactionButton} ${
+                    selected ? styles.reacted : ""
+                  }`}
+                  onClick={() => handleReaction(reaction)}
+                  disabled={selected}
+                  title={
+                    selected ? "You've already reacted to this link" : "React!"
+                  }
+                >
+                  <span className={styles.emoji}>{emoji}</span>
+                </button>
+              );
+            })}
           </div>
-          {hasUserReactedToLink() && (
-            <p className={styles.reactionMessage}>
-              You&apos;ve already reacted to this link
-            </p>
-          )}
         </div>
 
         <div className={styles.commentsSection}>
