@@ -6,6 +6,28 @@
   justify-content: center;
   user-select: none;
   cursor: pointer;
+
+  opacity: 0;
+  animation: popup 1s ease-out forwards;
+}
+
+@keyframes popup {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  80%{
+    transform: scale(1);
+    opacity: 1;
+  }
+  90% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .blurBackground {

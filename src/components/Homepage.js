@@ -22,8 +22,9 @@ export const Homepage = () => {
             width={860}
             height={240}
           />
+          <h1>A Garden of All Your Ideas</h1>
           <Link href="/garden">
-            <button>Enter the garden</button>
+            <button>Enter</button>
           </Link>
         </div>
       </div>

@@ -5,11 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Info from "./Info";
 import NewPost from "./NewPost";
-
 import { SeedlingBubble } from "./SeedlingBubble";
-
-import styles from "./App.module.css";
 import { BubbleModal } from "./BubbleModal";
+import styles from "./App.module.css";
 
 export const App = () => {
   // React uses a concept called "state" to keep track of data that changes over time, instead of using
@@ -96,47 +94,15 @@ export const App = () => {
         i
       </button>
       {/* Info overlay */}
-      <Info isOpen={isInfoOpen} onClose={closeInfo}>
-        {/* <Image //<-- Removed logo in favor of some text
-          src="/assets/pollinator-logo.svg"
-          alt="Pollinator"
-          width={206}
-          height={38.4}
-        /> */}
-        <h1>How to use Pollinator</h1>
-        <h2>the garden for all your ideas</h2>
-        <div className={styles.infoIllustrations}>
-          <div>
-            <div className={styles.illustrationPlant}></div>
-            <div className={styles.caption}>
-              <h4>PLANT</h4>
-              <p>double click to add a new idea</p>
-            </div>
-          </div>
-          <div>
-            <div className={styles.illustrationComment}></div>
-            <div className={styles.caption}>
-              <h4>COMMENT</h4>
-              <p>leave comments to help ideas grow</p>
-            </div>
-          </div>
-          <div>
-            <div className={styles.illustrationExplore}></div>
-            <div className={styles.caption}>
-              <h4>EXPLORE</h4>
-              <p>drag around to map your ideas</p>
-            </div>
-          </div>
-        </div>
-      </Info>
+      <Info isOpen={isInfoOpen} onClose={closeInfo}></Info>
       {/* NewPost Overlay */}
-      {/* <button className={styles.newPostButton} onClick={openNewPost}>Add New Post</button> */}
       <NewPost
         isOpen={isNewPostOpen}
         onClose={closeNewPost}
         onSubmit={handleNewPostSubmit}
         mousePosition={mousePosition}
       ></NewPost>
+      {/* Seedlings */}
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
       {Object.entries(seedlings).map(

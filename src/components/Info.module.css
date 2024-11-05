@@ -39,7 +39,7 @@
     margin-bottom: 0.2rem;
   }
 }
-
+/* 
 .closeButton {
   background: transparent;
   border: none;
@@ -57,4 +57,85 @@
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 0.6rem;
   transition: 0.08s ease;
+} */
+
+.closeButton2 {
+  /* font-family: "Courier New", Courier, monospace; */
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  font-size: 14px;
+  margin-bottom: 2rem;
+  color: #000;
+  background-color: #21fa90;
+  border: none;
+  cursor: pointer;
 }
+
+.infoIllustrations {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  margin: 2rem;
+  margin-bottom: 1rem;
+  color: coral;
+  padding: 0 2rem;
+}
+
+.illustrationExplore {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 8px;
+  background: url("/assets/explore.png") center / cover; /* illustration can be gifs */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.illustrationComment {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 8px;
+  background: url("/assets/comment.png") center / cover;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.illustrationPlant {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 8px;
+  background: url("/assets/plant.png") center / cover;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.caption {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  color: #6e6e6e;
+  text-align: center;
+
+  & h4 {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: black;
+    margin: 0.5rem 0;
+  }
+
+  & p {
+    margin-top: 0.2rem;
+  }
+}
+/* End of Info Overlay Style */
