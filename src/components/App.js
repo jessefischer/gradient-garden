@@ -9,6 +9,9 @@ import { SeedlingBubble } from "./SeedlingBubble";
 import { BubbleModal } from "./BubbleModal";
 import styles from "./App.module.css";
 
+const COMMENTS_WEIGHT = 50;
+const REACTIONS_WEIGHT = 20;
+
 export const App = () => {
   // React uses a concept called "state" to keep track of data that changes over time, instead of using
   // global variables like in P5. This state is local to the particular component it's defined in, in this
@@ -106,7 +109,21 @@ export const App = () => {
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
       {Object.entries(seedlings).map(
-        ([key, { x, y, title, url, size, color, comments, reactions }]) => {
+        ([
+          key,
+          { x, y, title, url, imgSrc, size, color, comments, reactions },
+        ]) => {
+          const numComments = comments ? Object.keys(comments).length : 0;
+          const numReactions = reactions
+            ? Object.keys(reactions).reduce(
+                (acc, cur) => acc + Object.keys(reactions[cur]).length,
+                0
+              )
+            : 0;
+          const adjustedSize =
+            size +
+            numComments * COMMENTS_WEIGHT +
+            numReactions * REACTIONS_WEIGHT;
           // We have to define a unique key for each element in the resulting array in order for React to keep
           // track of them properly
           return (
@@ -116,18 +133,20 @@ export const App = () => {
               url={url}
               x={x}
               y={y}
-              size={size}
+              size={adjustedSize}
               color={color}
+              imgSrc={imgSrc}
               setPosition={({ x: newX, y: newY }) => {
                 const newSeedling = {
                   x: newX,
                   y: newY,
                   title,
                   url,
+                  imgSrc,
                   size,
                   color,
-                  ...(comments ? {comments} : {}),
-                  ...(reactions ? {reactions} : {}),
+                  ...(comments ? { comments } : {}),
+                  ...(reactions ? { reactions } : {}),
                 };
                 // This seems cumbersome but is necessary because if we simply mutate one of the
                 // elements of newSeedlings, React won't notice that it's been updated and therefore

@@ -8,8 +8,15 @@ const NewPost = ({ isOpen, onClose, onSubmit, mousePosition }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    // Get the Open Graph image data for the URL if it exists.
+    const ogResponse = await fetch(`/api/open-graph?url=${url}`);
+    const ogData = await ogResponse.json();
+    const ogImageData = ogData.ogImage;
+    const imgSrc = Array.isArray(ogImageData)
+      ? ogImageData?.[0].url
+      : ogImageData?.url;
     const newSeedling = {
       x: mousePosition.x,
       y: mousePosition.y,
@@ -17,6 +24,7 @@ const NewPost = ({ isOpen, onClose, onSubmit, mousePosition }) => {
       url,
       size: 200, //default size
       color: randomColorFromPalette(),
+      imgSrc,
     };
     onSubmit(newSeedling); // Call the onSubmit function passed from App.js
     setTitle("");
