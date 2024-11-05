@@ -21,7 +21,7 @@ export const App = () => {
   const [isInfoOpen, setInfoOpen] = useState(true); // Set Info Overlay to default when opening the garden for the first time
   const [isNewPostOpen, setNewPostOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSeedling, setSelectedSeedling] = useState(null);
+  const [selectedSeedlingKey, setSelectedSeedlingKey] = useState(null);
   const [userId, setUserId] = useState(null);
   const [mousePosition, setMousePosition] = useState();
 
@@ -74,8 +74,8 @@ export const App = () => {
     closeNewPost(); // Close the overlay
   };
 
-  const handleSeedlingClick = (seedling) => {
-    setSelectedSeedling(seedling);
+  const handleSeedlingClick = (seedlingKey) => {
+    setSelectedSeedlingKey(seedlingKey);
     setIsModalOpen(true);
   };
 
@@ -139,51 +139,57 @@ export const App = () => {
       ></NewPost>
       {/* The .map function takes an array in one format and maps each element onto a different format.
           In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
-      {Object.entries(seedlings).map(([key,{ x, y, title, url, size, color }]) => {
-        // We have to define a unique key for each element in the resulting array in order for React to keep
-        // track of them properly
-        return (
-          <SeedlingBubble
-            key={key}
-            title={title}
-            url={url}
-            x={x}
-            y={y}
-            size={size}
-            color={color}
-            setPosition={({ x: newX, y: newY }) => {
-              const newSeedling = {
-                x: newX,
-                y: newY,
-                title,
-                url,
-                size,
-                color,
-              };
-              // This seems cumbersome but is necessary because if we simply mutate one of the
-              // elements of newSeedlings, React won't notice that it's been updated and therefore
-              // won't re-render the components. You have to create a whole new array from scratch
-              // in order for it to re-render.
-              const newSeedlings = {...seedlings};
-              newSeedlings[key] = newSeedling;
-              setSeedlings(newSeedlings);
-            }}
-            syncPosition={() => {
-              const seedlingsRef = ref(database, `seedlings/${key}`);
-              set(seedlingsRef, seedlings[key]);
-            }}
-            onClick={() => handleSeedlingClick({ x, y, title, url, size })}
-          />
-        );
-      })}{" "}
+      {Object.entries(seedlings).map(
+        ([key, { x, y, title, url, size, color, comments, reactions }]) => {
+          // We have to define a unique key for each element in the resulting array in order for React to keep
+          // track of them properly
+          return (
+            <SeedlingBubble
+              key={key}
+              title={title}
+              url={url}
+              x={x}
+              y={y}
+              size={size}
+              color={color}
+              setPosition={({ x: newX, y: newY }) => {
+                const newSeedling = {
+                  x: newX,
+                  y: newY,
+                  title,
+                  url,
+                  size,
+                  color,
+                  ...(comments ? {comments} : {}),
+                  ...(reactions ? {reactions} : {}),
+                };
+                // This seems cumbersome but is necessary because if we simply mutate one of the
+                // elements of newSeedlings, React won't notice that it's been updated and therefore
+                // won't re-render the components. You have to create a whole new array from scratch
+                // in order for it to re-render.
+                const newSeedlings = { ...seedlings };
+                newSeedlings[key] = newSeedling;
+                setSeedlings(newSeedlings);
+              }}
+              syncPosition={() => {
+                const seedlingsRef = ref(database, `seedlings/${key}`);
+                set(seedlingsRef, seedlings[key]);
+              }}
+              onClick={() => handleSeedlingClick(key)}
+            />
+          );
+        }
+      )}{" "}
       {/* End of Seedling */}
       {/* seedling info modal */}
-      <BubbleModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        seedlingData={selectedSeedling || {}}
-        userId={userId}
-      />
+      {isModalOpen ? (
+        <BubbleModal
+          onClose={() => setIsModalOpen(false)}
+          seedlingData={seedlings[selectedSeedlingKey] || {}}
+          seedlingKey={selectedSeedlingKey}
+          userId={userId}
+        />
+      ) : null}
     </div>
   );
 };
