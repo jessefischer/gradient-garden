@@ -131,64 +131,9 @@ export const App = () => {
       >
         <GooEffect />
         {/* Regular seedlings */}
-        {Object.entries(seedlings).map(
-          ([
-            key,
-            { x, y, title, url, imgSrc, size, color, comments, reactions },
-          ]) => {
-            const numComments = comments ? Object.keys(comments).length : 0;
-            const numReactions = reactions
-              ? Object.keys(reactions).reduce(
-                  (acc, cur) => acc + Object.keys(reactions[cur]).length,
-                  0
-                )
-              : 0;
-            const adjustedSize =
-              size +
-              numComments * COMMENTS_WEIGHT +
-              numReactions * REACTIONS_WEIGHT;
-
-            return (
-              <SeedlingBubble
-                key={key}
-                title={title}
-                url={url}
-                x={x}
-                y={y}
-                size={adjustedSize}
-                color={color}
-                imgSrc={imgSrc}
-                setPosition={({ x: newX, y: newY }) => {
-                  const newSeedling = {
-                    x: newX,
-                    y: newY,
-                    title,
-                    url,
-                    imgSrc,
-                    size,
-                    color,
-                    ...(comments ? { comments } : {}),
-                    ...(reactions ? { reactions } : {}),
-                  };
-                  const newSeedlings = { ...seedlings };
-                  newSeedlings[key] = newSeedling;
-                  setSeedlings(newSeedlings);
-                }}
-                syncPosition={() => {
-                  const seedlingsRef = ref(database, `seedlings/${key}`);
-                  set(seedlingsRef, seedlings[key]);
-                }}
-                onClick={() => handleSeedlingClick(key)}
-                canvasScale={0.9}
-                canvasPosition={position}
-              />
-            );
-          }
-        )}
-
-        {/* Shadow copy of seedlings for goo effect */}
-        <div className={styles.gooBubbles}>
-          {Object.entries(seedlings).map(
+        {Object.entries(seedlings)
+          .filter(([_, seedling]) => !seedling.hidden)
+          .map(
             ([
               key,
               { x, y, title, url, imgSrc, size, color, comments, reactions },
@@ -212,16 +157,75 @@ export const App = () => {
                   url={url}
                   x={x}
                   y={y}
-                  size={adjustedSize * 1.2} // Slightly larger for the goo effect
+                  size={adjustedSize}
                   color={color}
                   imgSrc={imgSrc}
-                  backgroundOnly={true}
+                  setPosition={({ x: newX, y: newY }) => {
+                    const newSeedling = {
+                      x: newX,
+                      y: newY,
+                      title,
+                      url,
+                      imgSrc,
+                      size,
+                      color,
+                      ...(comments ? { comments } : {}),
+                      ...(reactions ? { reactions } : {}),
+                    };
+                    const newSeedlings = { ...seedlings };
+                    newSeedlings[key] = newSeedling;
+                    setSeedlings(newSeedlings);
+                  }}
+                  syncPosition={() => {
+                    const seedlingsRef = ref(database, `seedlings/${key}`);
+                    set(seedlingsRef, seedlings[key]);
+                  }}
+                  onClick={() => handleSeedlingClick(key)}
                   canvasScale={0.9}
                   canvasPosition={position}
                 />
               );
             }
           )}
+
+        {/* Shadow copy of seedlings for goo effect */}
+        <div className={styles.gooBubbles}>
+          {Object.entries(seedlings)
+            .filter(([_, seedling]) => !seedling.hidden)
+            .map(
+              ([
+                key,
+                { x, y, title, url, imgSrc, size, color, comments, reactions },
+              ]) => {
+                const numComments = comments ? Object.keys(comments).length : 0;
+                const numReactions = reactions
+                  ? Object.keys(reactions).reduce(
+                      (acc, cur) => acc + Object.keys(reactions[cur]).length,
+                      0
+                    )
+                  : 0;
+                const adjustedSize =
+                  size +
+                  numComments * COMMENTS_WEIGHT +
+                  numReactions * REACTIONS_WEIGHT;
+
+                return (
+                  <SeedlingBubble
+                    key={key}
+                    title={title}
+                    url={url}
+                    x={x}
+                    y={y}
+                    size={adjustedSize * 1.2} // Slightly larger for the goo effect
+                    color={color}
+                    imgSrc={imgSrc}
+                    backgroundOnly={true}
+                    canvasScale={0.9}
+                    canvasPosition={position}
+                  />
+                );
+              }
+            )}
         </div>
       </div>
 

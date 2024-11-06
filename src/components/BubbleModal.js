@@ -12,6 +12,7 @@ const REACTION_EMOJI_MAP = {
 
 export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
   const [comment, setComment] = useState("");
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const comments = seedlingData?.comments || [];
   const reactions = seedlingData?.reactions || {};
@@ -57,6 +58,21 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
     const commentListRef = ref(database, `seedlings/${seedlingKey}/comments`);
     const newCommentRef = push(commentListRef);
     set(newCommentRef, newComment);
+  };
+
+  const handleDelete = () => {
+    // show confirmation dialog
+    setShowConfirmDialog(true);
+  };
+
+  const confirmDelete = () => {
+    // update the seedling to mark it as hidden
+    const seedlingRef = ref(database, `seedlings/${seedlingKey}`);
+    set(seedlingRef, {
+      ...seedlingData,
+      hidden: true,
+    });
+    onClose();
   };
 
   return (
@@ -137,6 +153,29 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
             ))}
           </div>
         </div>
+
+        <div className={styles.deleteSection}>
+          <button className={styles.deleteButton} onClick={handleDelete}>
+            Delete Post
+          </button>
+        </div>
+
+        {showConfirmDialog && (
+          <div
+            className={styles.confirmDialog}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p>
+              Are you sure you want to delete this post? This can't be undone.
+            </p>
+            <div className={styles.confirmButtons}>
+              <button onClick={confirmDelete}>Yes, Delete</button>
+              <button onClick={() => setShowConfirmDialog(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
