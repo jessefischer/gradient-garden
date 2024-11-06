@@ -168,7 +168,8 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <p>
-              Are you sure you want to delete this post? This can't be undone.
+              Are you sure you want to delete this post? This can&apos;t be
+              undone.
             </p>
             <div className={styles.confirmButtons}>
               <button onClick={confirmDelete}>Yes, Delete</button>
