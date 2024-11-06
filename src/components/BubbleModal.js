@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./BubbleModal.module.css";
 import { ref, set, push, remove } from "firebase/database";
 import { database } from "@/util/firebase";
+import Image from "next/image";
 
 const REACTION_EMOJI_MAP = {
   "🌸": "flower",
@@ -70,7 +71,8 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
         <div className={styles.linkPreviewContainer}>
           <div className={styles.linkPreview}>
             {imgSrc && (
-              <img
+              <Image
+                fill
                 src={imgSrc}
                 alt="Link preview"
                 className={styles.linkPreviewImage}
