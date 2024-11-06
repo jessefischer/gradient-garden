@@ -47,6 +47,7 @@
 }
 
 .linkPreviewContainer {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: left;
@@ -56,9 +57,15 @@
 
 .linkPreview {
   width: 100%;
-  height: 100%;
-  min-height: 200px;
+  height: 300px;
   background-color: #eee;
+  position: relative;
+}
+
+.linkPreviewImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
 .linkContainer {

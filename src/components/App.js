@@ -26,6 +26,9 @@ export const App = () => {
   const [selectedSeedlingKey, setSelectedSeedlingKey] = useState(null);
   const [userId, setUserId] = useState(null);
   const [mousePosition, setMousePosition] = useState();
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   // Set up a listener to the Firebase database to keep the seedlings state up to date
   useEffect(() => {
@@ -55,9 +58,12 @@ export const App = () => {
   }, []);
 
   const handleClick = (event) => {
-    // open a new post overlay when double click instead of directly adding a new seedling
     if (event.target === event.currentTarget) {
-      setMousePosition({ x: event.clientX, y: event.clientY });
+      const rect = event.currentTarget.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / 0.9 - position.x;
+      const y = (event.clientY - rect.top) / 0.9 - position.y;
+
+      setMousePosition({ x, y });
       openNewPost();
     }
   };
@@ -81,94 +87,50 @@ export const App = () => {
     setIsModalOpen(true);
   };
 
+  // Replace handleMouseDown, handleMouseMove, handleMouseUp with handleScroll
+  const handleScroll = (event) => {
+    // remove zoom control and just handle pan
+    event.preventDefault();
+    setPosition((prev) => ({
+      x: prev.x - event.deltaX,
+      y: prev.y - event.deltaY,
+    }));
+  };
+
+  useEffect(() => {
+    // prevent default pinch-to-zoom behavior
+    document.addEventListener("gesturestart", (e) => e.preventDefault());
+    document.addEventListener("gesturechange", (e) => e.preventDefault());
+  }, []);
+
   return (
-    // React uses a language called JSX which is a fancy way of inserting HTML-like language into the middle of
-    // JavaScript code. It compiles down into something similar to document.createElement('div').
-    <div className={styles.app} onDoubleClick={handleClick}>
-      <GooEffect />
-      <Link href="/">
-        <Image
-          src="/assets/pollinator-logo.svg"
-          alt="Pollinator"
-          width={206}
-          height={38.4}
-        />
-      </Link>
-      {/* Info overlay button */}
+    <div className={styles.appContainer} onWheel={handleScroll}>
       <button className={styles.openInfoButton} onClick={openInfo}>
         i
       </button>
-      {/* Info overlay */}
-      <Info isOpen={isInfoOpen} onClose={closeInfo}></Info>
-      {/* NewPost Overlay */}
-      <NewPost
-        isOpen={isNewPostOpen}
-        onClose={closeNewPost}
-        onSubmit={handleNewPostSubmit}
-        mousePosition={mousePosition}
-      ></NewPost>
-      {/* Seedlings */}
-      {/* The .map function takes an array in one format and maps each element onto a different format.
-          In this case, we take elements that are simple objects, and transform each one into a JSX element. */}
-      {Object.entries(seedlings).map(
-        ([
-          key,
-          { x, y, title, url, imgSrc, size, color, comments, reactions },
-        ]) => {
-          const numComments = comments ? Object.keys(comments).length : 0;
-          const numReactions = reactions
-            ? Object.keys(reactions).reduce(
-                (acc, cur) => acc + Object.keys(reactions[cur]).length,
-                0
-              )
-            : 0;
-          const adjustedSize =
-            size +
-            numComments * COMMENTS_WEIGHT +
-            numReactions * REACTIONS_WEIGHT;
-          // We have to define a unique key for each element in the resulting array in order for React to keep
-          // track of them properly
-          return (
-            <SeedlingBubble
-              key={key}
-              title={title}
-              url={url}
-              x={x}
-              y={y}
-              size={adjustedSize}
-              color={color}
-              imgSrc={imgSrc}
-              setPosition={({ x: newX, y: newY }) => {
-                const newSeedling = {
-                  x: newX,
-                  y: newY,
-                  title,
-                  url,
-                  imgSrc,
-                  size,
-                  color,
-                  ...(comments ? { comments } : {}),
-                  ...(reactions ? { reactions } : {}),
-                };
-                // This seems cumbersome but is necessary because if we simply mutate one of the
-                // elements of newSeedlings, React won't notice that it's been updated and therefore
-                // won't re-render the components. You have to create a whole new array from scratch
-                // in order for it to re-render.
-                const newSeedlings = { ...seedlings };
-                newSeedlings[key] = newSeedling;
-                setSeedlings(newSeedlings);
-              }}
-              syncPosition={() => {
-                const seedlingsRef = ref(database, `seedlings/${key}`);
-                set(seedlingsRef, seedlings[key]);
-              }}
-              onClick={() => handleSeedlingClick(key)}
+
+      <div className={styles.fixedElements}>
+        <div className={styles.logoContainer}>
+          <Link href="/">
+            <Image
+              src="/assets/pollinator-logo.svg"
+              alt="Pollinator"
+              width={206}
+              height={38.4}
             />
-          );
-        }
-      )}
-      {/* Shadow copy of all seedlings for the Goo effect */}
-      <div className={styles.gooBubbles}>
+          </Link>
+        </div>
+      </div>
+
+      <div
+        className={styles.canvas}
+        onDoubleClick={handleClick}
+        style={{
+          transform: `scale(0.9) translate(${position.x}px, ${position.y}px)`, // fixed scale at 0.9
+        }}
+      >
+        <GooEffect />
+        {/* Regular seedlings */}
         {Object.entries(seedlings).map(
           ([
             key,
@@ -185,8 +147,7 @@ export const App = () => {
               size +
               numComments * COMMENTS_WEIGHT +
               numReactions * REACTIONS_WEIGHT;
-            // We have to define a unique key for each element in the resulting array in order for React to keep
-            // track of them properly
+
             return (
               <SeedlingBubble
                 key={key}
@@ -197,23 +158,89 @@ export const App = () => {
                 size={adjustedSize}
                 color={color}
                 imgSrc={imgSrc}
-                backgroundOnly
+                setPosition={({ x: newX, y: newY }) => {
+                  const newSeedling = {
+                    x: newX,
+                    y: newY,
+                    title,
+                    url,
+                    imgSrc,
+                    size,
+                    color,
+                    ...(comments ? { comments } : {}),
+                    ...(reactions ? { reactions } : {}),
+                  };
+                  const newSeedlings = { ...seedlings };
+                  newSeedlings[key] = newSeedling;
+                  setSeedlings(newSeedlings);
+                }}
+                syncPosition={() => {
+                  const seedlingsRef = ref(database, `seedlings/${key}`);
+                  set(seedlingsRef, seedlings[key]);
+                }}
+                onClick={() => handleSeedlingClick(key)}
+                canvasScale={0.9}
+                canvasPosition={position}
               />
             );
           }
         )}
+
+        {/* Shadow copy of seedlings for goo effect */}
+        <div className={styles.gooBubbles}>
+          {Object.entries(seedlings).map(
+            ([
+              key,
+              { x, y, title, url, imgSrc, size, color, comments, reactions },
+            ]) => {
+              const numComments = comments ? Object.keys(comments).length : 0;
+              const numReactions = reactions
+                ? Object.keys(reactions).reduce(
+                    (acc, cur) => acc + Object.keys(reactions[cur]).length,
+                    0
+                  )
+                : 0;
+              const adjustedSize =
+                size +
+                numComments * COMMENTS_WEIGHT +
+                numReactions * REACTIONS_WEIGHT;
+
+              return (
+                <SeedlingBubble
+                  key={key}
+                  title={title}
+                  url={url}
+                  x={x}
+                  y={y}
+                  size={adjustedSize * 1.2} // Slightly larger for the goo effect
+                  color={color}
+                  imgSrc={imgSrc}
+                  backgroundOnly={true}
+                  canvasScale={0.9}
+                  canvasPosition={position}
+                />
+              );
+            }
+          )}
+        </div>
       </div>
 
-      {/* End of Seedling */}
-      {/* seedling info modal */}
-      {isModalOpen ? (
+      {/* Modals */}
+      <Info isOpen={isInfoOpen} onClose={closeInfo} />
+      <NewPost
+        isOpen={isNewPostOpen}
+        onClose={closeNewPost}
+        onSubmit={handleNewPostSubmit}
+        mousePosition={mousePosition}
+      />
+      {isModalOpen && (
         <BubbleModal
           onClose={() => setIsModalOpen(false)}
           seedlingData={seedlings[selectedSeedlingKey] || {}}
           seedlingKey={selectedSeedlingKey}
           userId={userId}
         />
-      ) : null}
+      )}
     </div>
   );
 };

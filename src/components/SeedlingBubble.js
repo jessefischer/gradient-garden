@@ -16,56 +16,93 @@ export const SeedlingBubble = ({
   onClick,
   syncPosition,
   backgroundOnly = false,
+  canvasScale = 1,
+  canvasPosition = { x: 0, y: 0 },
 }) => {
   const [background, setBackground] = useState();
-  const [isDragging, setDragging] = useState(false); // Initial value is false
-  const [dragStartPos, setDragStartPos] = useState(null); //setting a drag start to use mouseup for clicks
+  const [isDragging, setDragging] = useState(false);
+  const [dragStartPos, setDragStartPos] = useState(null);
+  const [dragStartTime, setDragStartTime] = useState(null);
 
   // We use the useEffect hook to run some code when the component is first rendered.
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
   // new random colors on every bubble every time the user adds a new bubble.
   useEffect(() => {
-    const newBackground = `radial-gradient(closest-side, transparent 40%, ${color} 60%, ${color} 80%, transparent 100%)`; //changed to single color gradient
+    const newBackground = `radial-gradient(closest-side, transparent 40%, ${color} 60%, ${color} 80%, transparent 100%)`;
     setBackground(newBackground);
   }, [color]);
 
   const handleMouseDown = function (e) {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / canvasScale - canvasPosition.x;
+    const mouseY = (e.clientY - rect.top) / canvasScale - canvasPosition.y;
+
+    setDragStartPos({ x: mouseX, y: mouseY });
+    setDragStartTime(Date.now());
     setDragging(true);
-    setDragStartPos({ x: e.clientX, y: e.clientY }); //store the start of the drag
   };
 
   const handleMouseMove = function (e) {
-    if (isDragging) {
-      setPosition({ x: e.clientX, y: e.clientY });
+    e.stopPropagation();
+    if (!isDragging) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / canvasScale - canvasPosition.x;
+    const mouseY = (e.clientY - rect.top) / canvasScale - canvasPosition.y;
+
+    if (dragStartPos) {
+      const dx = mouseX - dragStartPos.x;
+      const dy = mouseY - dragStartPos.y;
+      setPosition({ x: x + dx, y: y + dy });
     }
   };
 
   const handleMouseUp = function (e) {
-    if (
-      dragStartPos &&
-      Math.abs(e.clientX - dragStartPos.x) < 3 &&
-      Math.abs(e.clientY - dragStartPos.y) < 3
-    ) {
-      //if the mouse hasn't moved more than 3px, treat it as a click
-      onClick && onClick({ title, url });
+    e.stopPropagation();
+
+    if (dragStartPos) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const mouseX = (e.clientX - rect.left) / canvasScale - canvasPosition.x;
+      const mouseY = (e.clientY - rect.top) / canvasScale - canvasPosition.y;
+
+      const dx = Math.abs(mouseX - dragStartPos.x);
+      const dy = Math.abs(mouseY - dragStartPos.y);
+      const dragDistance = Math.sqrt(dx * dx + dy * dy);
+      const dragDuration = Date.now() - dragStartTime;
+
+      if (dragDistance < 3 && dragDuration < 200) {
+        // This was a click, not a drag
+        e.preventDefault();
+        onClick && onClick();
+      } else if (isDragging) {
+        // This was a drag
+        syncPosition();
+      }
     }
+
     setDragging(false);
-    setDragStartPos(null); //reset the drag start to 0
-    syncPosition();
+    setDragStartPos(null);
+    setDragStartTime(null);
+  };
+
+  // Add mouse leave handler to prevent stuck dragging state
+  const handleMouseLeave = function (e) {
+    if (isDragging) {
+      handleMouseUp(e);
+    }
   };
 
   if (backgroundOnly) {
     return (
       <div
-        // React uses "className" instead of the normal "class" because "class" is already a reserved keyword
-        // in JavaScript with a different meaning.
         className={styles.seedlingBubble}
         style={{
-          top: y - size / 2, // We do the extra calculation because CSS is expecting top-left corner
-          left: x - size / 2, // instead of center for <div> elements
+          top: y - size / 2,
+          left: x - size / 2,
           height: size,
           width: size,
-          zIndex: isDragging ? 1000 : "auto", // move bubble to toppest layer when dragged
+          zIndex: isDragging ? 1000 : "auto",
         }}
       >
         <div
@@ -79,35 +116,28 @@ export const SeedlingBubble = ({
   }
 
   return (
-    <>
-      {/* <GooEffect /> */}
+    <div
+      className={styles.seedlingBubble}
+      style={{
+        top: y - size / 2,
+        left: x - size / 2,
+        height: size,
+        width: size,
+        backgroundImage: `url(${imgSrc}`,
+        zIndex: isDragging ? 1000 : "auto",
+      }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+    >
       <div
-        // React uses "className" instead of the normal "class" because "class" is already a reserved keyword
-        // in JavaScript with a different meaning.
-        className={styles.seedlingBubble}
+        className={styles.gradientOutline}
         style={{
-          top: y - size / 2, // We do the extra calculation because CSS is expecting top-left corner
-          left: x - size / 2, // instead of center for <div> elements
-          height: size,
-          width: size,
-          backgroundImage: `url(${imgSrc}`,
-          zIndex: isDragging ? 1000 : "auto", // move bubble to toppest layer when dragged
-          // filter: "url(#goo) blur(10px)", //the goo filter is not working so I commented it out... -md
+          background,
         }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-      >
-        <div
-          className={styles.gradientOutline}
-          style={{
-            background,
-          }}
-        />
-        {/* We use the curly braces to inject the props into the JSX output, so that
-          when any of the props change value, the HTML will update or "react" automatically */}
-        <div className={styles.title}>{title}</div>
-      </div>
-    </>
+      />
+      <div className={styles.title}>{title}</div>
+    </div>
   );
 };

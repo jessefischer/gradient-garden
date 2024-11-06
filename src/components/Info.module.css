@@ -4,12 +4,34 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it appears above other content */
-  backdrop-filter: blur(40px);
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+}
+
+.pinnedInfo {
+  position: fixed;
+  top: auto;
+  left: auto;
+  right: 20px;
+  bottom: 20px;
+  background: none;
+  width: auto;
+  height: auto;
+}
+
+.pinnedInfo .infoContent {
+  transform: scale(0.7);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease;
+}
+
+.pinnedInfo .infoContent:hover {
+  transform: scale(0.75);
 }
 
 .infoContent {

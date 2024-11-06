@@ -13,32 +13,71 @@
     z-index: 20;
     position: relative;
   }
-
-  .openInfoButton {
-    font-family: "Bricolage Grotesque", sans-serif;
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 25px;
-    font-size: 30px;
-    background-color: #defbfc;
-    border: #afe8ea;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 4px 6px #28a6aa;
-    transition: background-color 0.3s;
-  }
-
-  .openInfoButton:hover {
-    background-color: rgb(169, 221, 222); /* Darken on hover */
-  }
 }
 
 .gooBubbles {
   position: absolute;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   z-index: -1;
   filter: url(#goo);
   opacity: 0.5;
+  pointer-events: none;
+}
+
+.appContainer {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: radial-gradient(circle at 50% 75%, rgb(231, 184, 229), white 50%);
+}
+
+.canvas {
+  width: 300vw;
+  height: 300vh;
+  position: absolute;
+  top: -100vh;
+  left: -100vw;
+  transform-origin: center center;
+  isolation: isolate;
+}
+
+.fixedElements {
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  pointer-events: none;
+}
+
+.logoContainer {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.openInfoButton {
+  font-family: "Bricolage Grotesque", sans-serif;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 25px;
+  font-size: 30px;
+  background-color: #defbfc;
+  border: #afe8ea;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 6px #28a6aa;
+  transition: background-color 0.3s;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.openInfoButton:hover {
+  background-color: rgb(169, 221, 222);
 }
