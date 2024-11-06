@@ -8,6 +8,7 @@ import NewPost from "./NewPost";
 import { SeedlingBubble } from "./SeedlingBubble";
 import { BubbleModal } from "./BubbleModal";
 import styles from "./App.module.css";
+import GooEffect from "./GooEffect";
 
 const COMMENTS_WEIGHT = 50;
 const REACTIONS_WEIGHT = 20;
@@ -84,6 +85,7 @@ export const App = () => {
     // React uses a language called JSX which is a fancy way of inserting HTML-like language into the middle of
     // JavaScript code. It compiles down into something similar to document.createElement('div').
     <div className={styles.app} onDoubleClick={handleClick}>
+      <GooEffect />
       <Link href="/">
         <Image
           src="/assets/pollinator-logo.svg"
@@ -164,7 +166,44 @@ export const App = () => {
             />
           );
         }
-      )}{" "}
+      )}
+      {/* Shadow copy of all seedlings for the Goo effect */}
+      <div className={styles.gooBubbles}>
+        {Object.entries(seedlings).map(
+          ([
+            key,
+            { x, y, title, url, imgSrc, size, color, comments, reactions },
+          ]) => {
+            const numComments = comments ? Object.keys(comments).length : 0;
+            const numReactions = reactions
+              ? Object.keys(reactions).reduce(
+                  (acc, cur) => acc + Object.keys(reactions[cur]).length,
+                  0
+                )
+              : 0;
+            const adjustedSize =
+              size +
+              numComments * COMMENTS_WEIGHT +
+              numReactions * REACTIONS_WEIGHT;
+            // We have to define a unique key for each element in the resulting array in order for React to keep
+            // track of them properly
+            return (
+              <SeedlingBubble
+                key={key}
+                title={title}
+                url={url}
+                x={x}
+                y={y}
+                size={adjustedSize}
+                color={color}
+                imgSrc={imgSrc}
+                backgroundOnly
+              />
+            );
+          }
+        )}
+      </div>
+
       {/* End of Seedling */}
       {/* seedling info modal */}
       {isModalOpen ? (

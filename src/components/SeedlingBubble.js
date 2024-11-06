@@ -15,6 +15,7 @@ export const SeedlingBubble = ({
   setPosition,
   onClick,
   syncPosition,
+  backgroundOnly = false,
 }) => {
   const [background, setBackground] = useState();
   const [isDragging, setDragging] = useState(false); // Initial value is false
@@ -52,6 +53,30 @@ export const SeedlingBubble = ({
     setDragStartPos(null); //reset the drag start to 0
     syncPosition();
   };
+
+  if (backgroundOnly) {
+    return (
+      <div
+        // React uses "className" instead of the normal "class" because "class" is already a reserved keyword
+        // in JavaScript with a different meaning.
+        className={styles.seedlingBubble}
+        style={{
+          top: y - size / 2, // We do the extra calculation because CSS is expecting top-left corner
+          left: x - size / 2, // instead of center for <div> elements
+          height: size,
+          width: size,
+          zIndex: isDragging ? 1000 : "auto", // move bubble to toppest layer when dragged
+        }}
+      >
+        <div
+          className={styles.gradientOutline}
+          style={{
+            background,
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <>
