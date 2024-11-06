@@ -22,6 +22,7 @@ export const SeedlingBubble = ({
   const [background, setBackground] = useState();
   const [isDragging, setDragging] = useState(false);
   const [dragStartPos, setDragStartPos] = useState(null);
+  const [dragStartTime, setDragStartTime] = useState(null);
 
   // We use the useEffect hook to run some code when the component is first rendered.
   // Otherwise, the code would be run *every time* the component re-renders, which would result int
@@ -33,54 +34,56 @@ export const SeedlingBubble = ({
 
   const handleMouseDown = function (e) {
     e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / canvasScale - canvasPosition.x;
+    const mouseY = (e.clientY - rect.top) / canvasScale - canvasPosition.y;
+
+    setDragStartPos({ x: mouseX, y: mouseY });
+    setDragStartTime(Date.now());
     setDragging(true);
-    setDragStartPos({
-      x: e.clientX,
-      y: e.clientY,
-      initialX: x,
-      initialY: y,
-    });
   };
 
   const handleMouseMove = function (e) {
-    if (isDragging) {
-      e.stopPropagation();
-      e.preventDefault();
+    e.stopPropagation();
+    if (!isDragging) return;
 
-      // Get the mouse position relative to the canvas
-      const mouseX = (e.clientX - canvasPosition.x) / canvasScale;
-      const mouseY = (e.clientY - canvasPosition.y) / canvasScale;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) / canvasScale - canvasPosition.x;
+    const mouseY = (e.clientY - rect.top) / canvasScale - canvasPosition.y;
 
-      // Calculate the offset from the drag start
-      const dx = mouseX - dragStartPos.x / canvasScale;
-      const dy = mouseY - dragStartPos.y / canvasScale;
-
-      // Update position using the initial position plus offset
-      setPosition({
-        x: dragStartPos.initialX + dx,
-        y: dragStartPos.initialY + dy,
-      });
+    if (dragStartPos) {
+      const dx = mouseX - dragStartPos.x;
+      const dy = mouseY - dragStartPos.y;
+      setPosition({ x: x + dx, y: y + dy });
     }
   };
 
   const handleMouseUp = function (e) {
     e.stopPropagation();
 
-    if (
-      dragStartPos &&
-      Math.abs(e.clientX - dragStartPos.x) < 3 &&
-      Math.abs(e.clientY - dragStartPos.y) < 3
-    ) {
-      // This was a click, not a drag
-      e.preventDefault(); // Prevent any default click behavior
-      onClick && onClick({ title, url });
-    } else if (isDragging) {
-      // This was a drag
-      syncPosition();
+    if (dragStartPos) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const mouseX = (e.clientX - rect.left) / canvasScale - canvasPosition.x;
+      const mouseY = (e.clientY - rect.top) / canvasScale - canvasPosition.y;
+
+      const dx = Math.abs(mouseX - dragStartPos.x);
+      const dy = Math.abs(mouseY - dragStartPos.y);
+      const dragDistance = Math.sqrt(dx * dx + dy * dy);
+      const dragDuration = Date.now() - dragStartTime;
+
+      if (dragDistance < 3 && dragDuration < 200) {
+        // This was a click, not a drag
+        e.preventDefault();
+        onClick && onClick();
+      } else if (isDragging) {
+        // This was a drag
+        syncPosition();
+      }
     }
 
     setDragging(false);
     setDragStartPos(null);
+    setDragStartTime(null);
   };
 
   // Add mouse leave handler to prevent stuck dragging state

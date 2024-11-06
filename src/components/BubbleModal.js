@@ -16,7 +16,7 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
   const comments = seedlingData?.comments || [];
   const reactions = seedlingData?.reactions || {};
 
-  const { title = "", url = "" } = seedlingData || {};
+  const { title = "", url = "", imgSrc = "" } = seedlingData || {};
 
   const handleReaction = (reaction, invert) => {
     if (!userId) return; // prevent reactions if no user id
@@ -31,8 +31,13 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
       set(newReactionRef, userId);
     } else {
       // remove user id from reaction
-      const userReactionKey = Object.entries(reactions[reaction] || {}).find(([, value]) => value === userId)?.[0];
-      const userReactionRef = ref(database, `seedlings/${seedlingKey}/reactions/${reaction}/${userReactionKey}`);
+      const userReactionKey = Object.entries(reactions[reaction] || {}).find(
+        ([, value]) => value === userId
+      )?.[0];
+      const userReactionRef = ref(
+        database,
+        `seedlings/${seedlingKey}/reactions/${reaction}/${userReactionKey}`
+      );
       remove(userReactionRef);
     }
   };
@@ -64,7 +69,13 @@ export const BubbleModal = ({ onClose, seedlingData, userId, seedlingKey }) => {
         <h2>{title}</h2>
         <div className={styles.linkPreviewContainer}>
           <div className={styles.linkPreview}>
-            {/* Link preview image goes here */}
+            {imgSrc && (
+              <img
+                src={imgSrc}
+                alt="Link preview"
+                className={styles.linkPreviewImage}
+              />
+            )}
           </div>
           <div className={styles.linkContainer}>
             <a href={url} target="_blank" rel="noopener noreferrer">

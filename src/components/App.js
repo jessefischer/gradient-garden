@@ -26,7 +26,6 @@ export const App = () => {
   const [selectedSeedlingKey, setSelectedSeedlingKey] = useState(null);
   const [userId, setUserId] = useState(null);
   const [mousePosition, setMousePosition] = useState();
-  const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -59,9 +58,12 @@ export const App = () => {
   }, []);
 
   const handleClick = (event) => {
-    // open a new post overlay when double click instead of directly adding a new seedling
     if (event.target === event.currentTarget) {
-      setMousePosition({ x: event.clientX, y: event.clientY });
+      const rect = event.currentTarget.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / 0.9 - position.x;
+      const y = (event.clientY - rect.top) / 0.9 - position.y;
+
+      setMousePosition({ x, y });
       openNewPost();
     }
   };
@@ -87,20 +89,12 @@ export const App = () => {
 
   // Replace handleMouseDown, handleMouseMove, handleMouseUp with handleScroll
   const handleScroll = (event) => {
-    if (event.ctrlKey || event.metaKey) {
-      // Handle zoom
-      event.preventDefault();
-      const delta = event.deltaY * -0.01;
-      const newScale = Math.min(Math.max(0.1, scale + delta), 4);
-      setScale(newScale);
-    } else {
-      // Handle pan with mouse wheel
-      event.preventDefault();
-      setPosition((prev) => ({
-        x: prev.x - event.deltaX,
-        y: prev.y - event.deltaY,
-      }));
-    }
+    // remove zoom control and just handle pan
+    event.preventDefault();
+    setPosition((prev) => ({
+      x: prev.x - event.deltaX,
+      y: prev.y - event.deltaY,
+    }));
   };
 
   useEffect(() => {
@@ -132,7 +126,7 @@ export const App = () => {
         className={styles.canvas}
         onDoubleClick={handleClick}
         style={{
-          transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+          transform: `scale(0.9) translate(${position.x}px, ${position.y}px)`, // fixed scale at 0.9
         }}
       >
         <GooEffect />
@@ -185,7 +179,7 @@ export const App = () => {
                   set(seedlingsRef, seedlings[key]);
                 }}
                 onClick={() => handleSeedlingClick(key)}
-                canvasScale={scale}
+                canvasScale={0.9}
                 canvasPosition={position}
               />
             );
@@ -222,7 +216,7 @@ export const App = () => {
                   color={color}
                   imgSrc={imgSrc}
                   backgroundOnly={true}
-                  canvasScale={scale}
+                  canvasScale={0.9}
                   canvasPosition={position}
                 />
               );
